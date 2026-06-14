@@ -20,7 +20,7 @@ export default function OnboardingConfirmPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           onboarding_complete: true,
-          disclaimer_accepted_at: new Date().toISOString(),
+          disclaimer_accepted: true,
           notifications_enabled: notificationsEnabled,
         }),
       });
@@ -29,7 +29,10 @@ export default function OnboardingConfirmPage() {
         throw new Error("Failed to complete onboarding");
       }
 
-      router.push("/home");
+      // Invalidate the client router cache so middleware re-evaluates against
+      // the now-completed profile, then leave the onboarding flow for good.
+      router.replace("/home");
+      router.refresh();
     } catch (error) {
       console.error("Error completing onboarding:", error);
     } finally {
