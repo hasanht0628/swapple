@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { requireUserWithProfile, UnauthorizedError } from "@/lib/auth/requireUser";
 import { uploadScanImage, getScanImageUrl } from "@/lib/supabase/storage";
 import { analyzeScan } from "@/lib/openai/analyzeScan";
+import { describeScanError } from "@/lib/openai/errors";
 import { MAX_ITEMS_PER_SCAN } from "@/lib/openai/prompts";
 import { serializeScan, serializeScanItem } from "@/lib/scans";
 import type { CreateScanResponse, ScanItemDTO } from "@/types/scan";
@@ -111,9 +112,10 @@ export async function POST(request: NextRequest) {
       // Mark the scan failed so the client can surface a retry.
       await supabase.from("scans").update({ status: "failed" }).eq("id", scan.id);
       console.error("Scan analysis failed:", err);
+      const { status, code, message } = describeScanError(err);
       return NextResponse.json(
-        { error: "Scan analysis failed.", scanId: scan.id },
-        { status: 502 },
+        { error: message, code, scanId: scan.id },
+        { status },
       );
     }
   } catch (err) {

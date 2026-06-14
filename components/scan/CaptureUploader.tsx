@@ -49,12 +49,19 @@ export function CaptureUploader() {
       });
 
       if (!response.ok) {
-        // Try to get the actual error message from the API
+        // Prefer the actionable message the API returns (it already maps
+        // OpenAI quota/auth/rate-limit failures to friendly guidance).
         let errorMessage = "Upload failed. Please try again.";
         try {
           const errorData = await response.json();
-          if (errorData.error) {
+          if (typeof errorData?.error === "string" && errorData.error) {
             errorMessage = errorData.error;
+          } else if (response.status === 400) {
+            errorMessage = "Invalid image file. Please try a different image.";
+          } else if (response.status === 413) {
+            errorMessage = "Image file is too large. Please try a smaller image.";
+          } else if (response.status >= 500) {
+            errorMessage = "Server error. Please try again in a moment.";
           }
         } catch {
           // If we can't parse the error response, use the default message
@@ -101,72 +108,89 @@ export function CaptureUploader() {
     }
   };
 
+  // Attach a stream to the (always-mounted) video element and start playback.
+  const attachStream = (stream: MediaStream) => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.srcObject = stream;
+    video.onloadedmetadata = () => {
+      video.play().catch((playError) => {
+        console.warn('Video play failed:', playError);
+      });
+    };
+  };
+
   // Initialize camera on mount
   useEffect(() => {
     let mounted = true;
-    
+
+    const requestStream = async (mode: 'environment' | 'user') =>
+      navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: mode },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
+        audio: false,
+      });
+
     const initCamera = async () => {
       if (!mounted) return;
-      
+
+      // Check if getUserMedia is available
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (mounted) setCameraState('error');
+        return;
+      }
+
+      if (mounted) setCameraState('loading');
+
+      let stream: MediaStream;
       try {
-        // Check if getUserMedia is available
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          if (mounted) setCameraState('error');
-          return;
-        }
-
-        if (mounted) setCameraState('loading');
-
-        const constraints: MediaStreamConstraints = {
-          video: {
-            facingMode: facingMode,
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          },
-          audio: false
-        };
-
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        
-        if (!mounted) {
-          // Component unmounted before stream was ready
-          stream.getTracks().forEach(track => track.stop());
-          return;
-        }
-        
-        streamRef.current = stream;
-
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          try {
-            await videoRef.current.play();
-          } catch (playError) {
-            console.warn('Video play failed:', playError);
-            // Autoplay might be blocked, user interaction required
-          }
-        }
-
-        setCameraState('active');
+        stream = await requestStream(facingMode);
       } catch (err) {
-        console.error('Camera access error:', err);
-        
-        if (!mounted) return;
-        
-        if (err instanceof Error) {
-          if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-            setCameraState('permission-denied');
-          } else {
-            setCameraState('error');
+        // Desktops typically lack an 'environment' camera — fall back to 'user'.
+        if (facingMode === 'environment') {
+          try {
+            stream = await requestStream('user');
+          } catch (fallbackErr) {
+            handleCameraError(fallbackErr, mounted);
+            return;
           }
         } else {
-          setCameraState('error');
+          handleCameraError(err, mounted);
+          return;
         }
       }
+
+      if (!mounted) {
+        // Component unmounted before stream was ready
+        stream.getTracks().forEach(track => track.stop());
+        return;
+      }
+
+      streamRef.current = stream;
+      attachStream(stream);
+      setCameraState('active');
     };
-    
+
+    const handleCameraError = (err: unknown, isMounted: boolean) => {
+      console.error('Camera access error:', err);
+      if (!isMounted) return;
+
+      if (
+        err instanceof Error &&
+        (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError')
+      ) {
+        setCameraState('permission-denied');
+      } else {
+        setCameraState('error');
+      }
+    };
+
     initCamera();
-    
-    // Cleanup on unmount
+
+    // Cleanup on unmount / facingMode change
     return () => {
       mounted = false;
       stopCamera();
@@ -244,17 +268,17 @@ export function CaptureUploader() {
       </div>
 
       {/* Camera viewfinder area */}
-      <div className="flex-1 flex items-center justify-center relative w-full max-h-screen lg:max-h-[70vh]">
-        {/* Video element for camera feed */}
-        {cameraState === 'active' && (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="absolute inset-0 w-full h-full object-cover z-0"
-          />
-        )}
+      <div className="flex-1 flex items-center justify-center relative w-full min-h-[60vh] max-h-screen lg:max-h-[70vh]">
+        {/* Video element for camera feed — always mounted so the stream can attach */}
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-200 ${
+            cameraState === 'active' ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
 
         {/* Corner brackets overlay */}
         <div className="absolute inset-8 lg:inset-16 pointer-events-none z-10">
