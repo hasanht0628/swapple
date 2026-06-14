@@ -31,13 +31,13 @@
               sodiumMg: 59
   assert:
     - type: javascript
-      value: file://../assertions/validateScanResponse.ts
+      value: file://assertions/validateScanResponse.ts
     - type: javascript
-      value: file://../assertions/noMedicalLanguage.ts
+      value: file://assertions/noMedicalLanguage.ts
     - type: javascript
-      value: file://../assertions/personalization.ts
+      value: file://assertions/personalization.ts
     - type: javascript
-      value: file://../assertions/verdictExpectation.ts
+      value: file://assertions/verdictExpectation.ts
     - type: icontains-any
       value: [contaminant, omega, farm, wild, pcb, pollutant]
 
@@ -66,13 +66,13 @@
               sodiumMg: 79
   assert:
     - type: javascript
-      value: file://../assertions/validateScanResponse.ts
+      value: file://assertions/validateScanResponse.ts
     - type: javascript
-      value: file://../assertions/noMedicalLanguage.ts
+      value: file://assertions/noMedicalLanguage.ts
     - type: javascript
-      value: file://../assertions/personalization.ts
+      value: file://assertions/personalization.ts
     - type: javascript
-      value: file://../assertions/verdictExpectation.ts
+      value: file://assertions/verdictExpectation.ts
 
 - description: "Honey-oat cereal, high added sugar — blood sugar (expect avoid/caution)"
   vars:
@@ -101,13 +101,13 @@
               sodiumMg: 280
   assert:
     - type: javascript
-      value: file://../assertions/validateScanResponse.ts
+      value: file://assertions/validateScanResponse.ts
     - type: javascript
-      value: file://../assertions/noMedicalLanguage.ts
+      value: file://assertions/noMedicalLanguage.ts
     - type: javascript
-      value: file://../assertions/personalization.ts
+      value: file://assertions/personalization.ts
     - type: javascript
-      value: file://../assertions/verdictExpectation.ts
+      value: file://assertions/verdictExpectation.ts
     - type: icontains-any
       value: ["added sugar", sugar, glycemic, refined]
 
@@ -135,13 +135,13 @@
               sodiumMg: 45
   assert:
     - type: javascript
-      value: file://../assertions/validateScanResponse.ts
+      value: file://assertions/validateScanResponse.ts
     - type: javascript
-      value: file://../assertions/noMedicalLanguage.ts
+      value: file://assertions/noMedicalLanguage.ts
     - type: javascript
-      value: file://../assertions/personalization.ts
+      value: file://assertions/personalization.ts
     - type: javascript
-      value: file://../assertions/verdictExpectation.ts
+      value: file://assertions/verdictExpectation.ts
 
 - description: "Plain Greek yogurt — gut health (expect good/caution, no medical claims)"
   vars:
@@ -168,13 +168,13 @@
               sodiumMg: 35
   assert:
     - type: javascript
-      value: file://../assertions/validateScanResponse.ts
+      value: file://assertions/validateScanResponse.ts
     - type: javascript
-      value: file://../assertions/noMedicalLanguage.ts
+      value: file://assertions/noMedicalLanguage.ts
     - type: javascript
-      value: file://../assertions/personalization.ts
+      value: file://assertions/personalization.ts
     - type: javascript
-      value: file://../assertions/verdictExpectation.ts
+      value: file://assertions/verdictExpectation.ts
 
 - description: "No priorities selected — general healthfulness fallback (plain water)"
   vars:
@@ -197,10 +197,10 @@
               sodiumMg: 2
   assert:
     - type: javascript
-      value: file://../assertions/validateScanResponse.ts
+      value: file://assertions/validateScanResponse.ts
     - type: javascript
-      value: file://../assertions/noMedicalLanguage.ts
+      value: file://assertions/noMedicalLanguage.ts
     - type: javascript
-      value: file://../assertions/personalization.ts
+      value: file://assertions/personalization.ts
     - type: javascript
-      value: file://../assertions/verdictExpectation.ts
+      value: file://assertions/verdictExpectation.ts

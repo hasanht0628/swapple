@@ -111,8 +111,8 @@ Append to `datasets/scanAnalysis.yaml`:
             ingredientsText: "..."
             nutrients: { sugarsG: 30, addedSugarsG: 24 }
   assert:
-    - { type: javascript, value: file://../assertions/validateScanResponse.ts }
-    - { type: javascript, value: file://../assertions/noMedicalLanguage.ts }
-    - { type: javascript, value: file://../assertions/personalization.ts }
-    - { type: javascript, value: file://../assertions/verdictExpectation.ts }
+    - { type: javascript, value: file://assertions/validateScanResponse.ts }
+    - { type: javascript, value: file://assertions/noMedicalLanguage.ts }
+    - { type: javascript, value: file://assertions/personalization.ts }
+    - { type: javascript, value: file://assertions/verdictExpectation.ts }
 ```
