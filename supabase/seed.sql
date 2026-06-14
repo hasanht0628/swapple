@@ -1,0 +1,43 @@
+-- Swapple seed data (local development only).
+--
+-- Profiles are normally created automatically by the on_auth_user_created
+-- trigger when a user signs up via magic link. For local seeding you can
+-- create an auth user first (e.g. via the Supabase Studio Auth tab or the
+-- admin API), then attach demo scans below by substituting the user id.
+--
+-- Example (replace <USER_ID> with a real auth.users id):
+--
+-- update public.profiles
+--   set display_name = 'Maya',
+--       priorities = array['heart_health', 'gut_health'],
+--       onboarding_complete = true,
+--       disclaimer_accepted_at = now()
+--   where id = '<USER_ID>';
+--
+-- insert into public.scans (id, user_id, image_path, status, item_count)
+-- values (
+--   '00000000-0000-0000-0000-000000000001',
+--   '<USER_ID>',
+--   '<USER_ID>/demo-cart.jpg',
+--   'completed',
+--   3
+-- );
+--
+-- insert into public.scan_items
+--   (scan_id, user_id, item_name, verdict, free_reason, general_principle,
+--    detailed_reason, product_data_source, confidence)
+-- values
+--   ('00000000-0000-0000-0000-000000000001', '<USER_ID>', 'Atlantic salmon',
+--    'caution', 'Higher contaminant load than wild-caught',
+--    'Look for wild-caught', 'Farmed Atlantic salmon tends to carry more...',
+--    'open_food_facts', 0.82),
+--   ('00000000-0000-0000-0000-000000000001', '<USER_ID>', 'Baby spinach',
+--    'good', 'Nutrient-dense, low pesticide residue',
+--    'Leafy greens are almost always a win', 'Spinach delivers folate...',
+--    'usda', 0.95),
+--   ('00000000-0000-0000-0000-000000000001', '<USER_ID>', 'Honey-oat cereal',
+--    'avoid', '18g added sugar per serving',
+--    'Check the added sugar line, not just "whole grain"', 'Despite the...',
+--    'open_food_facts', 0.88);
+
+select 'Swapple seed: edit seed.sql with a real auth user id to populate demo data.' as note;

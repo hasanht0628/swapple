@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/*
+  Swapple design system tokens.
+  Warm, minimal aesthetic — see the architecture plan's "Visual Design System".
+  These are foundational/shared and consumed by all screens via Tailwind utilities
+  (e.g. bg-background, bg-primary, text-verdict-good).
+*/
+
+@theme {
+  /* Surfaces */
+  --color-background: #faf6f1; /* warm off-white app background */
+  --color-surface: #ffffff; /* card surface */
+  --color-foreground: #1a1714; /* near-black warm text */
+  --color-muted: #6b6359; /* muted gray subtext */
+  --color-border: #e7ded3; /* warm hairline border */
+
+  /* Brand */
+  --color-primary: #7c3aed; /* primary purple */
+  --color-primary-foreground: #ffffff;
+  --color-primary-soft: #f3e9ff; /* tinted purple fill for selected chips/tiles */
+
+  /* Verdict palette */
+  --color-verdict-good: #16a34a;
+  --color-verdict-good-soft: #dcfce7;
+  --color-verdict-caution: #d97706;
+  --color-verdict-caution-soft: #fef3c7;
+  --color-verdict-avoid: #dc2626;
+  --color-verdict-avoid-soft: #fee2e2;
+
+  /* Radii */
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+
+  /* Mobile shell */
+  --spacing-shell: 390px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(26, 23, 20, 0.04), 0 8px 24px rgba(26, 23, 20, 0.06);
+
+  /* Fonts (wired from next/font in app/layout.tsx) */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Centered mobile shell used by app + onboarding layouts. */
+@utility mobile-shell {
+  width: 100%;
+  max-width: var(--spacing-shell);
+  margin-inline: auto;
+  min-height: 100dvh;
+}
