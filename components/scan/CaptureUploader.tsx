@@ -46,12 +46,6 @@ export function CaptureUploader() {
     }
   };
 
-  const handleCameraCapture = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
   const handleGalleryUpload = () => {
     const input = document.createElement("input");
     input.type = "file";
@@ -61,6 +55,134 @@ export function CaptureUploader() {
       if (file) handleFileSelect(file);
     };
     input.click();
+  };
+
+  // Stop camera stream
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+  };
+
+  // Initialize camera on mount
+  useEffect(() => {
+    let mounted = true;
+    
+    const initCamera = async () => {
+      if (!mounted) return;
+      
+      try {
+        // Check if getUserMedia is available
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          if (mounted) setCameraState('error');
+          return;
+        }
+
+        if (mounted) setCameraState('loading');
+
+        const constraints: MediaStreamConstraints = {
+          video: {
+            facingMode: facingMode,
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        };
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        
+        if (!mounted) {
+          // Component unmounted before stream was ready
+          stream.getTracks().forEach(track => track.stop());
+          return;
+        }
+        
+        streamRef.current = stream;
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play();
+        }
+
+        setCameraState('active');
+      } catch (err) {
+        console.error('Camera access error:', err);
+        
+        if (!mounted) return;
+        
+        if (err instanceof Error) {
+          if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+            setCameraState('permission-denied');
+          } else {
+            setCameraState('error');
+          }
+        } else {
+          setCameraState('error');
+        }
+      }
+    };
+    
+    initCamera();
+    
+    // Cleanup on unmount
+    return () => {
+      mounted = false;
+      stopCamera();
+    };
+  }, [facingMode]);
+
+  // Capture photo from video stream
+  const captureFromCamera = () => {
+    if (!videoRef.current || !canvasRef.current || cameraState !== 'active') {
+      return;
+    }
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    if (!ctx) return;
+
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw the current video frame to canvas
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert canvas to blob and create file
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+        handleFileSelect(file);
+      }
+    }, 'image/jpeg', 0.9);
+  };
+
+  // Handle camera capture button click
+  const handleCameraCapture = () => {
+    if (cameraState === 'active') {
+      captureFromCamera();
+    } else {
+      // Fallback to file input
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    }
+  };
+
+  // Switch camera facing mode (mobile)
+  const switchCamera = () => {
+    const newFacingMode = facingMode === 'environment' ? 'user' : 'environment';
+    setFacingMode(newFacingMode);
+  };
+
+  // Manual camera retry
+  const retryCamera = () => {
+    const newFacingMode = facingMode;
+    setFacingMode(newFacingMode === 'environment' ? 'user' : 'environment');
+    setTimeout(() => setFacingMode(newFacingMode), 100);
   };
 
   return (
@@ -82,8 +204,19 @@ export function CaptureUploader() {
 
       {/* Camera viewfinder area */}
       <div className="flex-1 flex items-center justify-center relative w-full max-h-screen lg:max-h-[70vh]">
+        {/* Video element for camera feed */}
+        {cameraState === 'active' && (
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="w-full h-full object-cover"
+          />
+        )}
+
         {/* Corner brackets overlay */}
-        <div className="absolute inset-8 lg:inset-16 pointer-events-none">
+        <div className="absolute inset-8 lg:inset-16 pointer-events-none z-10">
           <div className="w-full h-full relative">
             {/* Top-left bracket */}
             <div className="absolute top-0 left-0 w-8 h-8 lg:w-12 lg:h-12 border-l-2 border-t-2 lg:border-l-4 lg:border-t-4 border-white/80" />
@@ -96,11 +229,48 @@ export function CaptureUploader() {
           </div>
         </div>
 
-        {/* Placeholder for camera feed */}
-        <div className="text-center space-y-4 text-white/70">
-          <div className="text-sm lg:text-base uppercase tracking-wide">Live Camera Feed</div>
-          <div className="text-xs lg:text-sm">Camera preview would appear here</div>
-        </div>
+        {/* Camera state messages */}
+        {cameraState !== 'active' && (
+          <div className="text-center space-y-4 text-white/70 z-10">
+            {cameraState === 'loading' && (
+              <>
+                <div className="animate-spin w-8 h-8 lg:w-10 lg:h-10 border-2 lg:border-4 border-white/50 border-t-white rounded-full mx-auto" />
+                <div className="text-sm lg:text-base uppercase tracking-wide">Starting Camera</div>
+              </>
+            )}
+            
+            {cameraState === 'permission-denied' && (
+              <>
+                <div className="text-2xl lg:text-3xl">📷</div>
+                <div className="text-sm lg:text-base uppercase tracking-wide">Camera Permission Required</div>
+                <div className="text-xs lg:text-sm">Please allow camera access and refresh</div>
+                <button
+                  onClick={retryCamera}
+                  className="mt-2 px-4 py-2 bg-white/20 rounded-lg text-sm hover:bg-white/30"
+                >
+                  Try Again
+                </button>
+              </>
+            )}
+            
+            {cameraState === 'error' && (
+              <>
+                <div className="text-2xl lg:text-3xl">⚠️</div>
+                <div className="text-sm lg:text-base uppercase tracking-wide">Camera Unavailable</div>
+                <div className="text-xs lg:text-sm">Use the gallery upload instead</div>
+                <button
+                  onClick={retryCamera}
+                  className="mt-2 px-4 py-2 bg-white/20 rounded-lg text-sm hover:bg-white/30"
+                >
+                  Try Again
+                </button>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Hidden canvas for photo capture */}
+        <canvas ref={canvasRef} className="hidden" />
       </div>
 
       {/* Bottom instructions and controls */}
@@ -130,7 +300,19 @@ export function CaptureUploader() {
             )}
           </button>
 
-          <div className="w-12 h-12 lg:w-16 lg:h-16" /> {/* Spacer for symmetry */}
+          {/* Camera flip button - only show when camera is active */}
+          {cameraState === 'active' ? (
+            <button
+              onClick={switchCamera}
+              disabled={isUploading}
+              className="w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-white/20 flex items-center justify-center text-xl lg:text-2xl disabled:opacity-50"
+              title="Switch Camera"
+            >
+              🔄
+            </button>
+          ) : (
+            <div className="w-12 h-12 lg:w-16 lg:h-16" /> /* Spacer for symmetry */
+          )}
         </div>
       </div>
 
