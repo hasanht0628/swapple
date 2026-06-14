@@ -2,10 +2,12 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { processImageForUpload, isHeicFile } from "@/lib/image/convertHeic";
 
 export function CaptureUploader() {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isConverting, setIsConverting] = useState(false);
   const [cameraState, setCameraState] = useState<'loading' | 'active' | 'error' | 'permission-denied'>('loading');
   const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
   
@@ -22,8 +24,24 @@ export function CaptureUploader() {
     setError(null);
 
     try {
+      let processedFile = file;
+
+      // Convert HEIC to JPEG if needed
+      if (isHeicFile(file)) {
+        setIsConverting(true);
+        try {
+          processedFile = await processImageForUpload(file);
+        } catch (conversionError) {
+          console.error("HEIC conversion error:", conversionError);
+          setError("Failed to process HEIC image. Please try a different format or convert to JPEG first.");
+          return;
+        } finally {
+          setIsConverting(false);
+        }
+      }
+
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("image", processedFile);
 
       const response = await fetch("/api/scans", {
         method: "POST",
@@ -31,7 +49,24 @@ export function CaptureUploader() {
       });
 
       if (!response.ok) {
-        throw new Error("Upload failed");
+        // Try to get the actual error message from the API
+        let errorMessage = "Upload failed. Please try again.";
+        try {
+          const errorData = await response.json();
+          if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch {
+          // If we can't parse the error response, use the default message
+          if (response.status === 400) {
+            errorMessage = "Invalid image file. Please try a different image.";
+          } else if (response.status === 413) {
+            errorMessage = "Image file is too large. Please try a smaller image.";
+          } else if (response.status >= 500) {
+            errorMessage = "Server error. Please try again in a moment.";
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -40,9 +75,10 @@ export function CaptureUploader() {
       router.push(`/scans/${data.scan.id}`);
     } catch (err) {
       console.error("Upload error:", err);
-      setError("Upload failed. Please try again.");
+      setError(err instanceof Error ? err.message : "Upload failed. Please try again.");
     } finally {
       setIsUploading(false);
+      setIsConverting(false);
     }
   };
 
@@ -281,13 +317,13 @@ export function CaptureUploader() {
       {/* Bottom instructions and controls */}
       <div className="absolute bottom-0 left-0 right-0 p-6 space-y-6">
         <p className="text-center text-sm lg:text-base text-white/80">
-          Point at a product, shelf, or your cart
+          {isConverting ? "Converting photo..." : "Point at a product, shelf, or your cart"}
         </p>
 
         <div className="flex items-center justify-center gap-8 lg:gap-12">
           <button
             onClick={handleGalleryUpload}
-            disabled={isUploading}
+            disabled={isUploading || isConverting}
             className="w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-white/20 flex items-center justify-center text-xl lg:text-2xl disabled:opacity-50"
           >
             🖼️
@@ -295,10 +331,10 @@ export function CaptureUploader() {
 
           <button
             onClick={handleCameraCapture}
-            disabled={isUploading}
+            disabled={isUploading || isConverting}
             className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-white border-4 lg:border-6 border-white/50 flex items-center justify-center disabled:opacity-50"
           >
-            {isUploading ? (
+            {(isUploading || isConverting) ? (
               <div className="animate-spin w-6 h-6 lg:w-8 lg:h-8 border-2 lg:border-4 border-black border-t-transparent rounded-full" />
             ) : (
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-white" />
@@ -309,7 +345,7 @@ export function CaptureUploader() {
           {cameraState === 'active' ? (
             <button
               onClick={switchCamera}
-              disabled={isUploading}
+              disabled={isUploading || isConverting}
               className="w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-white/20 flex items-center justify-center text-xl lg:text-2xl disabled:opacity-50"
               title="Switch Camera"
             >
