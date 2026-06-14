@@ -37,7 +37,7 @@ export function BottomNav() {
       </nav>
       
       {/* Desktop top nav (lg+) */}
-      <nav className="hidden lg:flex fixed top-0 inset-x-0 z-10 bg-surface/95 backdrop-blur border-b border-border">
+      <nav className="hidden lg:flex fixed top-0 inset-x-0 z-10 bg-surface border-b border-border">
         <div className="responsive-app-container flex items-center justify-between px-6 py-4">
           <Link href="/home" className="text-xl font-black">
             Swa<span className="text-primary">pp</span>le
