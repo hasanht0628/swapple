@@ -38,7 +38,7 @@ export interface OpenAIScanItem {
 
 export interface OpenAIScanResponse {
   items: OpenAIScanItem[];
-  image_summary?: string;
+  image_summary?: string | null;
   limitations?: string[];
 }
 

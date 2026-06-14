@@ -36,7 +36,7 @@ export const scanItemSchema = z.object({
 
 export const scanResponseSchema = z.object({
   items: z.array(scanItemSchema),
-  image_summary: z.string().optional(),
+  image_summary: z.string().nullable().optional(),
   limitations: z.array(z.string()).optional(),
 });
 
