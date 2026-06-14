@@ -4,6 +4,9 @@ import { VerdictBadge } from "@/components/scan/VerdictBadge";
 import { LockedBrandCard } from "@/components/scan/LockedBrandCard";
 import { BrandRecommendationList } from "@/components/scan/BrandRecommendationList";
 import { requireUserWithProfile } from "@/lib/auth/requireUser";
+import { type PriorityTradeoff } from "@/types/scan";
+
+export const dynamic = 'force-dynamic';
 
 interface ScanItemDetailPageProps {
   params: Promise<{ scanId: string; itemId: string }>;
@@ -120,7 +123,7 @@ export default async function ScanItemDetailPage({ params }: ScanItemDetailPageP
             <div className="space-y-3">
               <h2 className="font-semibold">Priority insights</h2>
               <div className="space-y-2">
-                {(scanItem.priority_tradeoffs as any[]).map((tradeoff: any, i: number) => (
+                {(scanItem.priority_tradeoffs as PriorityTradeoff[]).map((tradeoff: PriorityTradeoff, i: number) => (
                   <div key={i} className="bg-surface rounded-xl p-3 border border-border">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-medium text-sm">{tradeoff.priority}</span>

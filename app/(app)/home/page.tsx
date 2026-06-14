@@ -3,6 +3,8 @@ import { RecentScansStrip } from "@/components/scan/RecentScansStrip";
 import { priorityLabel } from "@/lib/priorities";
 import { requireUserWithProfile } from "@/lib/auth/requireUser";
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const { user, profile } = await requireUserWithProfile();
 

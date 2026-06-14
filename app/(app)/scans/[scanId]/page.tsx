@@ -4,7 +4,9 @@ import { VerdictSummaryPills } from "@/components/scan/VerdictSummaryPills";
 import { ScanItemCard } from "@/components/scan/ScanItemCard";
 import { priorityLabel } from "@/lib/priorities";
 import { requireUserWithProfile } from "@/lib/auth/requireUser";
-import { type ScanItemDTO } from "@/types/scan";
+import { type ScanItemDTO, type PriorityTradeoff, type BrandRecommendation } from "@/types/scan";
+
+export const dynamic = 'force-dynamic';
 
 interface ScanResultsPageProps {
   params: Promise<{ scanId: string }>;
@@ -41,8 +43,8 @@ export default async function ScanResultsPage({ params }: ScanResultsPageProps) 
     free_reason: item.free_reason,
     general_principle: item.general_principle,
     detailed_reason: item.detailed_reason,
-    priority_tradeoffs: item.priority_tradeoffs as any[],
-    brand_recommendations: item.brand_recommendations as any[],
+    priority_tradeoffs: item.priority_tradeoffs as PriorityTradeoff[],
+    brand_recommendations: item.brand_recommendations as BrandRecommendation[],
     saved: item.saved,
     swapped: item.swapped,
     locked: profile.subscription_status !== 'paid' && item.verdict !== 'good',

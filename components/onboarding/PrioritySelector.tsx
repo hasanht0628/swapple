@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PRIORITIES, MIN_PRIORITIES, MAX_PRIORITIES } from "@/lib/priorities";
+import { PRIORITIES, MAX_PRIORITIES } from "@/lib/priorities";
 import { PriorityTile } from "./PriorityTile";
 import { cn } from "@/lib/utils";
 

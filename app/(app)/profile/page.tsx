@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
+export const dynamic = 'force-dynamic';
 import { useRouter } from "next/navigation";
 import { EditablePriorities } from "@/components/profile/EditablePriorities";
 import { SubscriptionPanel } from "@/components/profile/SubscriptionPanel";

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { type ScanDTO } from "@/types/scan";
 
 interface RecentScansStripProps {
@@ -80,9 +81,11 @@ export function RecentScansStrip({ limit = 3 }: RecentScansStripProps) {
           >
             <div className="w-20 h-20 bg-surface rounded-xl border border-border flex items-center justify-center text-muted text-xs text-center p-2 hover:shadow-md transition-shadow">
               {scan.image_url ? (
-                <img
+                <Image
                   src={scan.image_url}
                   alt="Scan"
+                  width={80}
+                  height={80}
                   className="w-full h-full object-cover rounded-lg"
                 />
               ) : (
