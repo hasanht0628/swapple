@@ -154,6 +154,7 @@ export default async function ScanItemDetailPage({ params }: ScanItemDetailPageP
                   recommendations={scanItem.brand_recommendations}
                   itemId={itemId}
                   scanId={scanId}
+                  initialSaved={scanItem.saved}
                 />
               ) : null}
             </>

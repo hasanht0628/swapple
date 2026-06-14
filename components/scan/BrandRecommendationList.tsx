@@ -8,6 +8,7 @@ interface BrandRecommendationListProps {
   recommendations: BrandRecommendation[];
   itemId: string;
   scanId: string;
+  initialSaved?: boolean;
   className?: string;
 }
 
@@ -15,9 +16,11 @@ export function BrandRecommendationList({
   recommendations,
   itemId,
   scanId,
+  initialSaved = false,
   className,
 }: BrandRecommendationListProps) {
   const [savingIds, setSavingIds] = useState<Set<number>>(new Set());
+  const [saved, setSaved] = useState(initialSaved);
 
   const handleSave = async (recommendation: BrandRecommendation) => {
     setSavingIds(prev => new Set(prev).add(recommendation.rank));
@@ -36,10 +39,11 @@ export function BrandRecommendationList({
         throw new Error("Failed to save");
       }
 
-      // Show success feedback (you could add toast notifications here)
-      console.log("Saved successfully");
+      const result = await response.json();
+      setSaved(result.saved);
     } catch (error) {
       console.error("Save failed:", error);
+      // You could add toast notifications for error here
     } finally {
       setSavingIds(prev => {
         const next = new Set(prev);
@@ -95,14 +99,16 @@ export function BrandRecommendationList({
               {/* Save button */}
               <button
                 onClick={() => handleSave(rec)}
-                disabled={isSaving}
+                disabled={isSaving || saved}
                 className={cn(
                   "flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-                  "bg-primary text-primary-foreground hover:bg-primary/90",
+                  saved
+                    ? "bg-green-100 text-green-700 border border-green-200"
+                    : "bg-primary text-primary-foreground hover:bg-primary/90",
                   "disabled:opacity-50 disabled:cursor-not-allowed"
                 )}
               >
-                {isSaving ? "Saving..." : "Save"}
+                {isSaving ? "Saving..." : saved ? "✓ Saved" : "Save"}
               </button>
             </div>
           );
