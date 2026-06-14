@@ -13,7 +13,7 @@ interface ScanButtonProps {
 const SIZE_CLASSES = {
   sm: "w-16 h-16 text-sm",
   md: "w-20 h-20 text-base", 
-  lg: "w-32 h-32 text-lg",
+  lg: "w-32 h-32 lg:w-28 lg:h-28 text-lg",
 } as const;
 
 export function ScanButton({ 

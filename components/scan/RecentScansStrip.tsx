@@ -37,11 +37,11 @@ export function RecentScansStrip({ limit = 3 }: RecentScansStripProps) {
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">Recent scans</h2>
         </div>
-        <div className="flex gap-3 overflow-x-auto pb-2">
+        <div className="flex gap-3 overflow-x-auto pb-2 lg:grid lg:grid-cols-3 lg:gap-4 lg:overflow-visible lg:pb-0">
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="flex-shrink-0 w-20 h-20 bg-surface rounded-xl animate-pulse"
+              className="flex-shrink-0 lg:flex-shrink w-20 h-20 lg:w-full lg:h-24 bg-surface rounded-xl animate-pulse"
             />
           ))}
         </div>
@@ -72,14 +72,14 @@ export function RecentScansStrip({ limit = 3 }: RecentScansStripProps) {
         </Link>
       </div>
 
-      <div className="flex gap-3 overflow-x-auto pb-2">
+      <div className="flex gap-3 overflow-x-auto pb-2 lg:grid lg:grid-cols-3 lg:gap-4 lg:overflow-visible lg:pb-0">
         {scans.map((scan) => (
           <Link
             key={scan.id}
             href={`/scans/${scan.id}`}
-            className="flex-shrink-0 block"
+            className="flex-shrink-0 lg:flex-shrink block"
           >
-            <div className="w-20 h-20 bg-surface rounded-xl border border-border flex items-center justify-center text-muted text-xs text-center p-2 hover:shadow-md transition-shadow">
+            <div className="w-20 h-20 lg:w-full lg:h-24 bg-surface rounded-xl border border-border flex items-center justify-center text-muted text-xs lg:text-sm text-center p-2 hover:shadow-md transition-shadow">
               {scan.image_url ? (
                 <Image
                   src={scan.image_url}
@@ -90,8 +90,8 @@ export function RecentScansStrip({ limit = 3 }: RecentScansStripProps) {
                 />
               ) : (
                 <div className="space-y-1">
-                  <div>📦</div>
-                  <div className="text-2xs">
+                  <div className="text-lg lg:text-xl">📦</div>
+                  <div className="text-2xs lg:text-xs">
                     {scan.item_count || 0} items
                   </div>
                 </div>

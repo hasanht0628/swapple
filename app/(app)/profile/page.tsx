@@ -104,10 +104,10 @@ export default function ProfilePage() {
 
   if (isLoading || !profile) {
     return (
-      <main className="flex flex-col gap-6 p-6">
-        <div className="animate-pulse space-y-6">
+      <main className="flex flex-col gap-8 lg:gap-12 p-6 lg:px-8">
+        <div className="animate-pulse space-y-8 lg:grid lg:grid-cols-2 lg:gap-12 lg:space-y-0">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-24 bg-surface rounded-2xl" />
+            <div key={i} className="h-24 lg:h-32 bg-surface rounded-2xl" />
           ))}
         </div>
       </main>
@@ -115,50 +115,58 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="flex flex-col gap-6 p-6">
+    <main className="flex flex-col gap-8 lg:gap-12 p-6 lg:px-8">
       {/* User info */}
-      <div className="flex items-center gap-4">
-        <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-semibold text-lg">
+      <div className="flex items-center gap-4 lg:gap-6 justify-center lg:justify-start">
+        <div className="w-16 h-16 lg:w-20 lg:h-20 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-semibold text-xl lg:text-2xl">
           {profile.display_name?.[0] || profile.email?.[0]?.toUpperCase() || "U"}
         </div>
-        <div>
-          <h1 className="font-semibold">
+        <div className="text-center lg:text-left">
+          <h1 className="font-semibold text-lg lg:text-xl">
             {profile.display_name || "User"}
           </h1>
-          <p className="text-sm text-muted">{profile.email}</p>
+          <p className="text-sm lg:text-base text-muted">{profile.email}</p>
         </div>
       </div>
 
-      {/* Priorities */}
-      <EditablePriorities
-        initialPriorities={profile.priorities || []}
-        onSave={handlePrioritiesChange}
-      />
+      <div className="lg:grid lg:grid-cols-2 lg:gap-12 space-y-8 lg:space-y-0">
+        {/* Left column */}
+        <div className="space-y-8">
+          {/* Priorities */}
+          <EditablePriorities
+            initialPriorities={profile.priorities || []}
+            onSave={handlePrioritiesChange}
+          />
 
-      {/* Subscription */}
-      <SubscriptionPanel
-        subscriptionStatus={profile.subscription_status}
-        onUpgrade={handleUpgrade}
-        onManage={handleManageSubscription}
-      />
+          {/* Subscription */}
+          <SubscriptionPanel
+            subscriptionStatus={profile.subscription_status}
+            onUpgrade={handleUpgrade}
+            onManage={handleManageSubscription}
+          />
+        </div>
 
-      {/* About/Trust */}
-      <TrustStatement />
+        {/* Right column */}
+        <div className="space-y-8">
+          {/* About/Trust */}
+          <TrustStatement />
 
-      {/* Notifications */}
-      <NotificationsToggle
-        initialEnabled={profile.notifications_enabled}
-        onToggle={handleNotificationsToggle}
-      />
+          {/* Notifications */}
+          <NotificationsToggle
+            initialEnabled={profile.notifications_enabled}
+            onToggle={handleNotificationsToggle}
+          />
 
-      {/* Sign out */}
-      <div className="pt-4">
-        <button
-          onClick={handleSignOut}
-          className="w-full rounded-2xl border border-border bg-surface px-4 py-3 font-medium text-muted hover:bg-muted/20 transition-colors"
-        >
-          Sign out
-        </button>
+          {/* Sign out */}
+          <div className="pt-4">
+            <button
+              onClick={handleSignOut}
+              className="w-full rounded-2xl border border-border bg-surface px-4 py-3 lg:px-6 lg:py-4 font-medium text-muted hover:bg-muted/20 transition-colors"
+            >
+              Sign out
+            </button>
+          </div>
+        </div>
       </div>
     </main>
   );

@@ -36,11 +36,11 @@ export function StatsCards() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         {Array.from({ length: 2 }).map((_, i) => (
           <div
             key={i}
-            className="bg-surface rounded-2xl p-6 shadow-card animate-pulse"
+            className="bg-surface rounded-2xl p-6 lg:p-8 shadow-card animate-pulse"
           >
             <div className="h-8 bg-muted/20 rounded mb-2" />
             <div className="h-6 bg-muted/20 rounded w-1/2" />
@@ -64,17 +64,17 @@ export function StatsCards() {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
       {cards.map((card) => (
         <div
           key={card.title}
-          className="bg-surface rounded-2xl p-6 shadow-card text-center space-y-2"
+          className="bg-surface rounded-2xl p-6 lg:p-8 shadow-card text-center space-y-3 lg:space-y-4"
         >
-          <div className="text-2xl">{card.icon}</div>
-          <div className="text-2xl font-bold text-primary">
+          <div className="text-2xl lg:text-3xl">{card.icon}</div>
+          <div className="text-2xl lg:text-3xl font-bold text-primary">
             {card.value}
           </div>
-          <div className="text-sm text-muted font-medium">
+          <div className="text-sm lg:text-base text-muted font-medium">
             {card.title}
           </div>
         </div>

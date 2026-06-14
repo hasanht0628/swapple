@@ -1,12 +1,14 @@
-// Auth route group: centered mobile shell, no bottom nav.
+import { ResponsiveShell } from "@/components/layout/ResponsiveShell";
+
+// Auth route group: responsive container, no bottom nav.
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="mobile-shell flex flex-col justify-center p-6">
+    <ResponsiveShell className="flex flex-col justify-center p-6 lg:px-8">
       {children}
-    </div>
+    </ResponsiveShell>
   );
 }

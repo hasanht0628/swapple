@@ -32,8 +32,12 @@
   --radius-2xl: 1rem;
   --radius-3xl: 1.5rem;
 
-  /* Mobile shell */
-  --spacing-shell: 390px;
+  /* Responsive containers */
+  --spacing-shell: 390px; /* legacy mobile shell */
+  --max-width-xs: 390px;
+  --max-width-sm: 28rem;   /* 448px */
+  --max-width-md: 42rem;   /* 672px */
+  --max-width-lg: 64rem;   /* 1024px */
 
   /* Shadows */
   --shadow-card: 0 1px 2px rgba(26, 23, 20, 0.04), 0 8px 24px rgba(26, 23, 20, 0.06);
@@ -55,10 +59,52 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Centered mobile shell used by app + onboarding layouts. */
+/* Responsive container utilities for different layout needs */
 @utility mobile-shell {
   width: 100%;
   max-width: var(--spacing-shell);
   margin-inline: auto;
   min-height: 100dvh;
+}
+
+@utility responsive-container {
+  width: 100%;
+  margin-inline: auto;
+  min-height: 100dvh;
+}
+
+@utility responsive-app-container {
+  width: 100%;
+  margin-inline: auto;
+  min-height: 100dvh;
+}
+
+@media (min-width: 640px) {
+  .responsive-container {
+    max-width: var(--max-width-sm);
+  }
+  
+  .responsive-app-container {
+    max-width: var(--max-width-xs);
+  }
+}
+
+@media (min-width: 768px) {
+  .responsive-container {
+    max-width: var(--max-width-md);
+  }
+  
+  .responsive-app-container {
+    max-width: var(--max-width-sm);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-container {
+    max-width: var(--max-width-lg);
+  }
+  
+  .responsive-app-container {
+    max-width: var(--max-width-md);
+  }
 }

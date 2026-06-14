@@ -43,8 +43,8 @@ export function PrioritySelector({
     <div className={cn("space-y-6", className)}>
       <div className="space-y-4">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">What should we watch for you?</h1>
-          <p className="text-muted text-sm">
+          <h1 className="text-2xl lg:text-4xl font-bold">What should we watch for you?</h1>
+          <p className="text-muted text-sm lg:text-base max-w-2xl mx-auto">
             Pick 1–3 priorities. Every verdict gets tuned to your goals.{" "}
             <span className="font-medium text-primary">
               {selectedIds.length} selected
@@ -52,7 +52,7 @@ export function PrioritySelector({
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
           {PRIORITIES.map((priority) => (
             <PriorityTile
               key={priority.id}
