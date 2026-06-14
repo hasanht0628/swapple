@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# promptfoo evals (generated output + local cache)
+/evals/output/
+.promptfoo/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

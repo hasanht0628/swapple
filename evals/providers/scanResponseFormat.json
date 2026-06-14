@@ -1,0 +1,141 @@
+{
+  "type": "json_schema",
+  "json_schema": {
+    "name": "swapple_scan",
+    "strict": true,
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "item_name": {
+                "type": "string"
+              },
+              "brand_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "verdict": {
+                "type": "string",
+                "enum": [
+                  "good",
+                  "caution",
+                  "avoid"
+                ]
+              },
+              "free_reason": {
+                "type": "string"
+              },
+              "general_principle": {
+                "type": "string"
+              },
+              "detailed_reason": {
+                "type": "string"
+              },
+              "priority_tradeoffs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "priority": {
+                      "type": "string"
+                    },
+                    "impact": {
+                      "type": "string",
+                      "enum": [
+                        "positive",
+                        "mixed",
+                        "negative"
+                      ]
+                    },
+                    "explanation": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "priority",
+                    "impact",
+                    "explanation"
+                  ]
+                }
+              },
+              "brand_recommendations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "rank": {
+                      "type": "integer"
+                    },
+                    "brand": {
+                      "type": "string"
+                    },
+                    "product_name": {
+                      "type": "string"
+                    },
+                    "why_better": {
+                      "type": "string"
+                    },
+                    "tradeoffs": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "rank",
+                    "brand",
+                    "product_name",
+                    "why_better",
+                    "tradeoffs"
+                  ]
+                }
+              },
+              "confidence": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "item_name",
+              "brand_name",
+              "verdict",
+              "free_reason",
+              "general_principle",
+              "detailed_reason",
+              "priority_tradeoffs",
+              "brand_recommendations",
+              "confidence"
+            ]
+          }
+        },
+        "image_summary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "items",
+        "image_summary",
+        "limitations"
+      ]
+    }
+  }
+}

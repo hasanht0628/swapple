@@ -1,0 +1,206 @@
+# Test cases for the Swapple pass-2 scan analysis prompt.
+#
+# Each case feeds mock enriched product data (the same EnrichedProductData shape
+# the production enrichment waterfall produces) plus user priorities, then asserts
+# on the structured verdict + reasoning.
+#
+# NOTE: every input is nested under a single `tc` object var. promptfoo expands
+# TOP-LEVEL array vars into a cartesian product of rows; nesting keeps each case
+# one row. `tc.expected_verdicts` lists the acceptable verdict set for the case.
+
+- description: "Farm-raised Atlantic salmon — heart & gut health (expect caution/avoid)"
+  vars:
+    tc:
+      priorities: [heart_health, gut_health]
+      expected_verdicts: [caution, avoid]
+      items:
+        - item_name: "Atlantic Salmon Fillet"
+          brand_name: "Farm Fresh"
+          enriched:
+            source: open_food_facts
+            matched: true
+            itemName: "Farm-raised Atlantic salmon fillet"
+            brandName: "Farm Fresh"
+            ingredientsText: "Farm-raised Atlantic salmon (color added)"
+            categories: [Seafood, "Farmed fish"]
+            nutrients:
+              energyKcal: 208
+              proteinG: 20
+              fatG: 13
+              saturatedFatG: 3
+              sodiumMg: 59
+  assert:
+    - type: javascript
+      value: file://../assertions/validateScanResponse.ts
+    - type: javascript
+      value: file://../assertions/noMedicalLanguage.ts
+    - type: javascript
+      value: file://../assertions/personalization.ts
+    - type: javascript
+      value: file://../assertions/verdictExpectation.ts
+    - type: icontains-any
+      value: [contaminant, omega, farm, wild, pcb, pollutant]
+
+- description: "Organic baby spinach — gut health & inflammation (expect good)"
+  vars:
+    tc:
+      priorities: [gut_health, inflammation]
+      expected_verdicts: [good]
+      items:
+        - item_name: "Organic Baby Spinach"
+          brand_name: "Earthbound Farm"
+          enriched:
+            source: open_food_facts
+            matched: true
+            itemName: "Organic baby spinach"
+            brandName: "Earthbound Farm"
+            ingredientsText: "Organic baby spinach"
+            novaGroup: 1
+            nutriScore: a
+            categories: [Vegetables, "Leafy greens"]
+            nutrients:
+              energyKcal: 23
+              proteinG: 2.9
+              fiberG: 2.2
+              sugarsG: 0.4
+              sodiumMg: 79
+  assert:
+    - type: javascript
+      value: file://../assertions/validateScanResponse.ts
+    - type: javascript
+      value: file://../assertions/noMedicalLanguage.ts
+    - type: javascript
+      value: file://../assertions/personalization.ts
+    - type: javascript
+      value: file://../assertions/verdictExpectation.ts
+
+- description: "Honey-oat cereal, high added sugar — blood sugar (expect avoid/caution)"
+  vars:
+    tc:
+      priorities: [blood_sugar]
+      expected_verdicts: [avoid, caution]
+      items:
+        - item_name: "Honey Oat Crunch Cereal"
+          brand_name: "MorningCo"
+          enriched:
+            source: open_food_facts
+            matched: true
+            itemName: "Honey Oat Crunch Cereal"
+            brandName: "MorningCo"
+            ingredientsText: "Whole grain oats, sugar, honey, brown sugar syrup, salt, natural flavor"
+            novaGroup: 4
+            nutriScore: d
+            categories: ["Breakfast cereals"]
+            nutrients:
+              energyKcal: 380
+              proteinG: 6
+              carbohydratesG: 80
+              sugarsG: 30
+              addedSugarsG: 24
+              fiberG: 4
+              sodiumMg: 280
+  assert:
+    - type: javascript
+      value: file://../assertions/validateScanResponse.ts
+    - type: javascript
+      value: file://../assertions/noMedicalLanguage.ts
+    - type: javascript
+      value: file://../assertions/personalization.ts
+    - type: javascript
+      value: file://../assertions/verdictExpectation.ts
+    - type: icontains-any
+      value: ["added sugar", sugar, glycemic, refined]
+
+- description: "Ultra-processed cola — weight management & blood sugar (expect avoid)"
+  vars:
+    tc:
+      priorities: [weight_management, blood_sugar]
+      expected_verdicts: [avoid]
+      items:
+        - item_name: "Cola Classic"
+          brand_name: "FizzPop"
+          enriched:
+            source: open_food_facts
+            matched: true
+            itemName: "Cola soft drink"
+            brandName: "FizzPop"
+            ingredientsText: "Carbonated water, high fructose corn syrup, caramel color, phosphoric acid, natural flavors, caffeine"
+            novaGroup: 4
+            nutriScore: e
+            categories: [Beverages, Sodas]
+            nutrients:
+              energyKcal: 140
+              sugarsG: 39
+              addedSugarsG: 39
+              sodiumMg: 45
+  assert:
+    - type: javascript
+      value: file://../assertions/validateScanResponse.ts
+    - type: javascript
+      value: file://../assertions/noMedicalLanguage.ts
+    - type: javascript
+      value: file://../assertions/personalization.ts
+    - type: javascript
+      value: file://../assertions/verdictExpectation.ts
+
+- description: "Plain Greek yogurt — gut health (expect good/caution, no medical claims)"
+  vars:
+    tc:
+      priorities: [gut_health]
+      expected_verdicts: [good, caution]
+      items:
+        - item_name: "Plain Greek Yogurt"
+          brand_name: "Hellas"
+          enriched:
+            source: usda
+            matched: true
+            itemName: "Plain whole-milk Greek yogurt"
+            brandName: "Hellas"
+            ingredientsText: "Cultured pasteurized whole milk, live active cultures"
+            novaGroup: 3
+            categories: [Dairy, Yogurt]
+            nutrients:
+              energyKcal: 97
+              proteinG: 9
+              fatG: 5
+              saturatedFatG: 3
+              sugarsG: 4
+              sodiumMg: 35
+  assert:
+    - type: javascript
+      value: file://../assertions/validateScanResponse.ts
+    - type: javascript
+      value: file://../assertions/noMedicalLanguage.ts
+    - type: javascript
+      value: file://../assertions/personalization.ts
+    - type: javascript
+      value: file://../assertions/verdictExpectation.ts
+
+- description: "No priorities selected — general healthfulness fallback (plain water)"
+  vars:
+    tc:
+      priorities: []
+      expected_verdicts: [good]
+      items:
+        - item_name: "Spring Water"
+          brand_name: "ClearSpring"
+          enriched:
+            source: open_food_facts
+            matched: true
+            itemName: "Natural spring water"
+            brandName: "ClearSpring"
+            ingredientsText: "Spring water"
+            novaGroup: 1
+            categories: [Beverages, Water]
+            nutrients:
+              energyKcal: 0
+              sodiumMg: 2
+  assert:
+    - type: javascript
+      value: file://../assertions/validateScanResponse.ts
+    - type: javascript
+      value: file://../assertions/noMedicalLanguage.ts
+    - type: javascript
+      value: file://../assertions/personalization.ts
+    - type: javascript
+      value: file://../assertions/verdictExpectation.ts

@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+#
+# Promptfoo eval config for the Swapple two-pass vision scan flow.
+# This config targets the pass-2 *analysis* prompt (the verdict + reasoning step),
+# reusing the exact production prompt text from lib/openai/prompts.ts and the
+# production zod schema from lib/openai/schema.ts.
+#
+# Run from the repo root:  npm run eval   (or: npx promptfoo eval -c evals/promptfooconfig.yaml)
+description: "Swapple scan analysis (pass-2 verdict + reasoning) evals"
+
+prompts:
+  # Shared prompt function — wraps SYSTEM_PROMPT + buildAnalysisPrompt().
+  - file://prompts/scanAnalysisPrompt.ts:scanAnalysisPrompt
+
+providers:
+  - id: openai:gpt-4o
+    config:
+      temperature: 0
+      max_tokens: 2000
+      # Enforce the production structured-output contract (generated from
+      # lib/openai/schema.ts -> SCAN_JSON_SCHEMA).
+      response_format: file://providers/scanResponseFormat.json
+
+# Test cases (mock enriched product data + user priorities + assertions).
+tests: file://datasets/scanAnalysis.yaml
+
+# Default assertions applied to every test case in addition to per-case ones.
+defaultTest:
+  assert:
+    - type: is-json
+    - type: cost
+      threshold: 0.05
+    - type: latency
+      threshold: 30000
+
+outputPath: ./evals/output/latest.json
