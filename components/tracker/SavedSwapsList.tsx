@@ -1,59 +1,17 @@
-"use client";
+import { type BrandRecommendation } from "@/types/scan";
 
-import { useState, useEffect } from "react";
-import { type ScanItemDTO } from "@/types/scan";
-
-interface SavedSwap extends ScanItemDTO {
-  scan_id: string;
-  original_product?: string;
+export interface SavedSwapItem {
+  id: string;
+  item_name: string;
+  saved_recommendation: BrandRecommendation | null;
+  swapped: boolean;
 }
 
-export function SavedSwapsList() {
-  const [savedSwaps, setSavedSwaps] = useState<SavedSwap[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+interface SavedSwapsListProps {
+  savedSwaps: SavedSwapItem[];
+}
 
-  useEffect(() => {
-    async function fetchSavedSwaps() {
-      try {
-        // In a real app, this would be a dedicated endpoint for saved items
-        // For now, we'll show placeholder data
-        setIsLoading(false);
-        // Placeholder - empty for now
-        setSavedSwaps([]);
-      } catch (error) {
-        console.error("Failed to fetch saved swaps:", error);
-        setIsLoading(false);
-      }
-    }
-
-    fetchSavedSwaps();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <h2 className="font-semibold">Saved swaps</h2>
-        <div className="space-y-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div
-              key={i}
-              className="bg-surface rounded-2xl p-4 shadow-card animate-pulse"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-muted/20 rounded-lg" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-muted/20 rounded w-3/4" />
-                  <div className="h-3 bg-muted/20 rounded w-1/2" />
-                </div>
-                <div className="w-16 h-6 bg-muted/20 rounded" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
+export function SavedSwapsList({ savedSwaps }: SavedSwapsListProps) {
   if (savedSwaps.length === 0) {
     return (
       <section className="space-y-4">
@@ -75,49 +33,35 @@ export function SavedSwapsList() {
     <section className="space-y-4">
       <h2 className="font-semibold">Saved swaps</h2>
       <div className="space-y-3">
-        {savedSwaps.map((swap) => (
-          <div
-            key={swap.id}
-            className="bg-surface rounded-2xl p-4 shadow-card"
-          >
-            <div className="flex items-center gap-4">
-              {/* Placeholder thumbnail */}
-              <div className="flex-shrink-0 w-12 h-12 bg-muted/20 rounded-lg flex items-center justify-center text-muted text-xs">
-                📦
-              </div>
+        {savedSwaps.map((swap) => {
+          const productName =
+            swap.saved_recommendation?.product_name ?? swap.item_name;
 
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-medium truncate">
-                  {swap.item_name}
-                </h3>
-                {swap.brand_name && (
+          return (
+            <div
+              key={swap.id}
+              className="bg-surface rounded-2xl p-4 shadow-card"
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-muted/20 rounded-lg flex items-center justify-center text-muted text-xs">
+                  📦
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium truncate">{productName}</h3>
                   <p className="text-sm text-muted truncate">
-                    {swap.brand_name}
+                    was {swap.item_name}
                   </p>
-                )}
-                {swap.original_product && (
-                  <p className="text-xs text-muted">
-                    was {swap.original_product}
-                  </p>
-                )}
-              </div>
+                </div>
 
-              {/* Status badge */}
-              {swap.swapped ? (
-                <div className="flex items-center gap-1 px-2 py-1 bg-verdict-good-soft text-verdict-good text-xs font-medium rounded-full">
+                <div className="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full border border-green-200">
                   <span>✓</span>
-                  <span>Swapped</span>
+                  <span>{swap.swapped ? "Swapped" : "Saved"}</span>
                 </div>
-              ) : (
-                <div className="flex items-center gap-1 px-2 py-1 bg-muted/20 text-muted text-xs font-medium rounded-full">
-                  <span>📌</span>
-                  <span>Saved</span>
-                </div>
-              )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

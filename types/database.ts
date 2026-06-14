@@ -51,6 +51,8 @@ export type ScanItemRow = {
   product_data_source: string | null;
   confidence: number | null;
   saved: boolean;
+  saved_recommendation_rank: number | null;
+  saved_recommendation: unknown | null;
   swapped: boolean;
   created_at: string;
 };
