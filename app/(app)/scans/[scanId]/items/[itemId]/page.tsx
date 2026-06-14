@@ -4,7 +4,8 @@ import { VerdictBadge } from "@/components/scan/VerdictBadge";
 import { LockedBrandCard } from "@/components/scan/LockedBrandCard";
 import { BrandRecommendationList } from "@/components/scan/BrandRecommendationList";
 import { requireUserWithProfile } from "@/lib/auth/requireUser";
-import { type PriorityTradeoff } from "@/types/scan";
+import { isItemLocked } from "@/lib/verdicts";
+import { type PriorityTradeoff, type Verdict } from "@/types/scan";
 
 export const dynamic = 'force-dynamic';
 
@@ -46,7 +47,10 @@ export default async function ScanItemDetailPage({ params }: ScanItemDetailPageP
 
   const currentPosition = (previousItems?.length || 0) + 1;
 
-  const isLocked = profile.subscription_status !== 'paid' && scanItem.verdict !== 'good';
+  const isLocked = isItemLocked(
+    scanItem.verdict as Verdict,
+    profile.subscription_status,
+  );
 
   return (
     <main className="flex flex-col gap-6 lg:gap-8 p-6 lg:px-8">

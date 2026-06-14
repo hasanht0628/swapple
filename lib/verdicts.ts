@@ -5,6 +5,7 @@
  * only free_reason + general_principle to free users; detailed_reason,
  * priority_tradeoffs and brand_recommendations are paid-only.
  */
+import { PAID_GATING_ENABLED } from "@/lib/featureFlags";
 import type { SubscriptionStatus } from "@/types/database";
 import type { Verdict } from "@/types/scan";
 
@@ -55,6 +56,7 @@ export function isItemLocked(
   verdict: Verdict,
   status: SubscriptionStatus,
 ): boolean {
+  if (!PAID_GATING_ENABLED) return false;
   if (verdict === "good") return false;
   return !isPaid(status);
 }

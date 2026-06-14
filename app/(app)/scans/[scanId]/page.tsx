@@ -4,7 +4,9 @@ import { VerdictSummaryPills } from "@/components/scan/VerdictSummaryPills";
 import { ScanItemCard } from "@/components/scan/ScanItemCard";
 import { priorityLabel } from "@/lib/priorities";
 import { requireUserWithProfile } from "@/lib/auth/requireUser";
-import { type ScanItemDTO, type PriorityTradeoff, type BrandRecommendation } from "@/types/scan";
+import { serializeScanItem } from "@/lib/scans";
+import type { ScanItemDTO } from "@/types/scan";
+import type { ScanItemRow } from "@/types/database";
 
 export const dynamic = 'force-dynamic';
 
@@ -35,20 +37,9 @@ export default async function ScanResultsPage({ params }: ScanResultsPageProps) 
     .eq("user_id", user.id)
     .order("created_at");
 
-  const items: ScanItemDTO[] = (scanItems || []).map(item => ({
-    id: item.id,
-    item_name: item.item_name,
-    brand_name: item.brand_name,
-    verdict: item.verdict as "good" | "caution" | "avoid",
-    free_reason: item.free_reason,
-    general_principle: item.general_principle,
-    detailed_reason: item.detailed_reason,
-    priority_tradeoffs: item.priority_tradeoffs as PriorityTradeoff[],
-    brand_recommendations: item.brand_recommendations as BrandRecommendation[],
-    saved: item.saved,
-    swapped: item.swapped,
-    locked: profile.subscription_status !== 'paid' && item.verdict !== 'good',
-  }));
+  const items: ScanItemDTO[] = (scanItems || []).map((item) =>
+    serializeScanItem(item as ScanItemRow, profile.subscription_status),
+  );
 
   const priorities = profile.priorities || [];
   const priorityLabels = priorities.map(priorityLabel);
