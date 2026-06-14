@@ -102,7 +102,12 @@ export function CaptureUploader() {
 
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          videoRef.current.play();
+          try {
+            await videoRef.current.play();
+          } catch (playError) {
+            console.warn('Video play failed:', playError);
+            // Autoplay might be blocked, user interaction required
+          }
         }
 
         setCameraState('active');
@@ -211,7 +216,7 @@ export function CaptureUploader() {
             autoPlay
             playsInline
             muted
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover z-0"
           />
         )}
 
@@ -231,7 +236,7 @@ export function CaptureUploader() {
 
         {/* Camera state messages */}
         {cameraState !== 'active' && (
-          <div className="text-center space-y-4 text-white/70 z-10">
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4 text-white/70 z-10">
             {cameraState === 'loading' && (
               <>
                 <div className="animate-spin w-8 h-8 lg:w-10 lg:h-10 border-2 lg:border-4 border-white/50 border-t-white rounded-full mx-auto" />
