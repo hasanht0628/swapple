@@ -1,14 +1,14 @@
-// TODO(ui): Magic-link sign-in form — email input that calls
-// supabase.auth.signInWithOtp({ email, options: { emailRedirectTo:
-// `${origin}/auth/callback` } }). See components/auth/MagicLinkForm.tsx.
+import { MobileShell } from "@/components/layout/MobileShell";
+import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
+
 export default function SignInPage() {
   return (
-    <main className="flex flex-col gap-4">
-      <h1 className="text-2xl font-black">Sign in to Swapple</h1>
-      <p className="text-sm text-muted">
-        Enter your email and we’ll send you a magic link.
-      </p>
-      {/* PLACEHOLDER: MagicLinkForm goes here. */}
-    </main>
+    <MobileShell>
+      <div className="flex min-h-dvh items-center justify-center p-6">
+        <div className="w-full max-w-sm">
+          <MagicLinkForm />
+        </div>
+      </div>
+    </MobileShell>
   );
 }

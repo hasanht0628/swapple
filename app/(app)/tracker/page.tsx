@@ -1,11 +1,18 @@
-// TODO(ui): Tracker — stat cards ("Scans this month", "Swaps made") and a
-// "Saved swaps" list with "was [original]" subtitle + green "✓ Swapped" badge.
-// See components/tracker/StatsCards.tsx + SavedSwapsList.tsx.
+import { StatsCards } from "@/components/tracker/StatsCards";
+import { SavedSwapsList } from "@/components/tracker/SavedSwapsList";
+
 export default function TrackerPage() {
   return (
-    <main className="flex flex-col gap-4 p-6">
-      <h1 className="text-2xl font-black">Tracker</h1>
-      {/* PLACEHOLDER */}
+    <main className="flex flex-col gap-8 p-6">
+      <div>
+        <h1 className="text-2xl font-black mb-2">Your progress</h1>
+        <p className="text-muted text-sm">
+          Track your scans and see how you&apos;re improving your choices
+        </p>
+      </div>
+
+      <StatsCards />
+      <SavedSwapsList />
     </main>
   );
 }
