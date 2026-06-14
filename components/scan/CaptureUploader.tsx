@@ -1,12 +1,18 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export function CaptureUploader() {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cameraState, setCameraState] = useState<'loading' | 'active' | 'error' | 'permission-denied'>('loading');
+  const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const router = useRouter();
 
   const handleFileSelect = async (file: File) => {

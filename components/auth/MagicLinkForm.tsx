@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 export function MagicLinkForm() {
@@ -8,8 +8,19 @@ export function MagicLinkForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
 
   const supabase = createClient();
+
+  // Cooldown timer effect
+  useEffect(() => {
+    if (cooldownSeconds > 0) {
+      const timer = setTimeout(() => {
+        setCooldownSeconds(cooldownSeconds - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldownSeconds]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,12 +36,23 @@ export function MagicLinkForm() {
       });
 
       if (error) {
-        setError(error.message);
+        // Check for rate limit errors and show user-friendly message
+        if (error.message?.includes("429") || error.message?.toLowerCase().includes("rate limit")) {
+          setError("Too many login emails sent. Please wait a few minutes and try again.");
+        } else {
+          setError(error.message);
+        }
       } else {
         setIsSubmitted(true);
+        setCooldownSeconds(10); // 10 second cooldown
       }
-    } catch {
-      setError("An unexpected error occurred. Please try again.");
+    } catch (err) {
+      // Handle fetch errors that might not be caught by Supabase client
+      if (err instanceof Error && err.message?.includes("429")) {
+        setError("Too many login emails sent. Please wait a few minutes and try again.");
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -50,6 +72,8 @@ export function MagicLinkForm() {
           onClick={() => {
             setIsSubmitted(false);
             setEmail("");
+            setError(null);
+            setCooldownSeconds(0);
           }}
           className="text-sm text-primary hover:underline"
         >
@@ -92,10 +116,15 @@ export function MagicLinkForm() {
 
         <button
           type="submit"
-          disabled={isLoading || !email.trim()}
+          disabled={isLoading || !email.trim() || cooldownSeconds > 0}
           className="w-full rounded-xl bg-primary px-4 py-3 font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? "Sending..." : "Send sign-in link"}
+          {isLoading 
+            ? "Sending..." 
+            : cooldownSeconds > 0
+              ? `Wait ${cooldownSeconds}s`
+              : "Send sign-in link"
+          }
         </button>
       </form>
 

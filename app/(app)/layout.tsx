@@ -7,9 +7,9 @@ export default function AppLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ResponsiveShell className="flex min-h-dvh flex-col" variant="app">
+    <ResponsiveShell className="min-h-dvh" variant="app">
       {/* Top spacing for desktop nav, bottom spacing for mobile nav */}
-      <div className="flex-1 pb-20 lg:pt-20 lg:pb-6">{children}</div>
+      <div className="pb-20 lg:pt-20 lg:pb-6">{children}</div>
       <BottomNav />
     </ResponsiveShell>
   );

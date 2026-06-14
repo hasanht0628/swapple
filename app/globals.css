@@ -70,13 +70,11 @@ body {
 @utility responsive-container {
   width: 100%;
   margin-inline: auto;
-  min-height: 100dvh;
 }
 
 @utility responsive-app-container {
   width: 100%;
   margin-inline: auto;
-  min-height: 100dvh;
 }
 
 @media (min-width: 640px) {
