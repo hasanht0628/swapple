@@ -47,15 +47,27 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith("/sign-in") ||
     pathname.startsWith("/auth");
 
+  // API routes must never be redirected to an HTML page. They enforce their own
+  // auth via requireUser() and return JSON (401, etc). Redirecting them breaks
+  // fetch() calls: a 307 is transparently followed to an HTML route that returns
+  // 200, so the client sees `response.ok` and assumes success while the request
+  // (e.g. PATCH /api/profile during onboarding) never actually runs.
+  const isApiRoute = pathname.startsWith("/api");
+
   // Signed-out users may only access public routes.
-  if (!user && !isPublicRoute) {
+  if (!user && !isPublicRoute && !isApiRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/sign-in";
     return NextResponse.redirect(url);
   }
 
   // Signed-in users that haven't completed onboarding get routed there.
-  if (user && !isPublicRoute && !pathname.startsWith("/onboarding")) {
+  if (
+    user &&
+    !isPublicRoute &&
+    !isApiRoute &&
+    !pathname.startsWith("/onboarding")
+  ) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("onboarding_complete")
