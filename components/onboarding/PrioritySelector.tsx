@@ -22,14 +22,11 @@ export function PrioritySelector({
     let newSelection: string[];
 
     if (selectedIds.includes(priorityId)) {
-      // Remove if already selected
       newSelection = selectedIds.filter((id) => id !== priorityId);
     } else {
-      // Add if not selected and under max limit
       if (selectedIds.length < MAX_PRIORITIES) {
         newSelection = [...selectedIds, priorityId];
       } else {
-        // At max limit, don't add
         return;
       }
     }
@@ -38,21 +35,18 @@ export function PrioritySelector({
     onSelectionChange(newSelection);
   };
 
-
   return (
     <div className={cn("space-y-6", className)}>
       <div className="space-y-4">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl lg:text-4xl font-bold">What should we watch for you?</h1>
-          <p className="text-muted text-sm lg:text-base max-w-2xl mx-auto">
+        <div className="space-y-2 text-center">
+          <h1 className="sw-h1">What should we watch for you?</h1>
+          <p className="sw-sub mx-auto max-w-2xl text-sm">
             Pick 1–3 priorities. Every verdict gets tuned to your goals.{" "}
-            <span className="font-medium text-primary">
-              {selectedIds.length} selected
-            </span>
+            <span className="font-semibold text-primary">{selectedIds.length} selected</span>
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
           {PRIORITIES.map((priority) => (
             <PriorityTile
               key={priority.id}
@@ -65,11 +59,9 @@ export function PrioritySelector({
       </div>
 
       {selectedIds.length === MAX_PRIORITIES && (
-        <div className="text-center">
-          <p className="text-xs text-muted">
-            Maximum {MAX_PRIORITIES} priorities selected. Deselect one to choose another.
-          </p>
-        </div>
+        <p className="text-center text-xs text-muted">
+          Maximum {MAX_PRIORITIES} priorities selected. Deselect one to choose another.
+        </p>
       )}
     </div>
   );

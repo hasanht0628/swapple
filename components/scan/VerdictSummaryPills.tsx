@@ -12,36 +12,37 @@ interface VerdictCount {
   avoid: number;
 }
 
+const PILL_CONFIG = {
+  good: { className: "v-good", dot: "✓" },
+  caution: { className: "v-caution", dot: "!" },
+  avoid: { className: "v-avoid", dot: "×" },
+} as const;
+
 export function VerdictSummaryPills({ items, className }: VerdictSummaryPillsProps) {
   const counts = items.reduce<VerdictCount>(
     (acc, item) => {
       acc[item.verdict]++;
       return acc;
     },
-    { good: 0, caution: 0, avoid: 0 }
+    { good: 0, caution: 0, avoid: 0 },
   );
 
   const pills = [
-    { verdict: "good", count: counts.good, color: "bg-verdict-good" },
-    { verdict: "caution", count: counts.caution, color: "bg-verdict-caution" },
-    { verdict: "avoid", count: counts.avoid, color: "bg-verdict-avoid" },
-  ] as const;
+    { verdict: "good" as const, count: counts.good },
+    { verdict: "caution" as const, count: counts.caution },
+    { verdict: "avoid" as const, count: counts.avoid },
+  ];
 
   return (
-    <div className={cn("flex gap-2", className)}>
-      {pills.map(({ verdict, count, color }) => {
+    <div className={cn("flex flex-wrap gap-2", className)}>
+      {pills.map(({ verdict, count }) => {
         if (count === 0) return null;
-        
+        const config = PILL_CONFIG[verdict];
+
         return (
-          <div
-            key={verdict}
-            className={cn(
-              "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium text-white",
-              color
-            )}
-          >
-            <span>{count}</span>
-            <span>{verdict}</span>
+          <div key={verdict} className={cn("sw-verdict", config.className)}>
+            <span className="dot">{config.dot}</span>
+            {count} {verdict}
           </div>
         );
       })}

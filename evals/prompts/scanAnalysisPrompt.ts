@@ -28,6 +28,10 @@ export interface ScanTestCase {
     enriched?: EnrichedProductData;
   }>;
   expected_verdicts?: string[];
+  /** At least one brand_recommendation must mention one of these (case-insensitive). */
+  expected_swap_keywords?: string[];
+  /** No recommendation may mention any of these. */
+  forbidden_swap_keywords?: string[];
 }
 
 interface ChatMessage {

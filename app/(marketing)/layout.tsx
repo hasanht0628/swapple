@@ -1,9 +1,10 @@
-// Marketing route group: public landing, no auth, no bottom nav.
-// PLACEHOLDER layout — UI agent to build the full marketing chrome.
+import "./marketing.css";
+import "./article.css";
+
 export default function MarketingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="min-h-dvh bg-background">{children}</div>;
+  return <div className="marketing-page min-h-dvh">{children}</div>;
 }

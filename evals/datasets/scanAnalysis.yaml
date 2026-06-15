@@ -2,17 +2,21 @@
 #
 # Each case feeds mock enriched product data (the same EnrichedProductData shape
 # the production enrichment waterfall produces) plus user priorities, then asserts
-# on the structured verdict + reasoning.
+# on the structured verdict, reasoning, and brand_recommendations.
 #
 # NOTE: every input is nested under a single `tc` object var. promptfoo expands
 # TOP-LEVEL array vars into a cartesian product of rows; nesting keeps each case
 # one row. `tc.expected_verdicts` lists the acceptable verdict set for the case.
+# `expected_swap_keywords` / `forbidden_swap_keywords` drive brand-rec assertions.
+# Forbidden keywords are checked on recommended brand + product_name only.
 
 - description: "Farm-raised Atlantic salmon — heart & gut health (expect caution/avoid)"
   vars:
     tc:
       priorities: [heart_health, gut_health]
       expected_verdicts: [caution, avoid]
+      expected_swap_keywords: [wild, sardine, mackerel, sockeye, alaskan, omega]
+      forbidden_swap_keywords: [farm-raised, farm raised, color added]
       items:
         - item_name: "Atlantic Salmon Fillet"
           brand_name: "Farm Fresh"
@@ -46,6 +50,7 @@
     tc:
       priorities: [gut_health, inflammation]
       expected_verdicts: [good]
+      expected_swap_keywords: [kale, arugula, chard, greens, spinach, organic]
       items:
         - item_name: "Organic Baby Spinach"
           brand_name: "Earthbound Farm"
@@ -79,6 +84,8 @@
     tc:
       priorities: [blood_sugar]
       expected_verdicts: [avoid, caution]
+      expected_swap_keywords: [oats, oatmeal, shredded wheat, bran, unsweetened, plain, muesli, fiber, whole grain, low sugar, less sugar, golean, puffins, kashi]
+      forbidden_swap_keywords: [honey oat, honey-oat, added sugar syrup]
       items:
         - item_name: "Honey Oat Crunch Cereal"
           brand_name: "MorningCo"
@@ -116,6 +123,8 @@
     tc:
       priorities: [weight_management, blood_sugar]
       expected_verdicts: [avoid]
+      expected_swap_keywords: [water, sparkling, seltzer, tea, unsweetened, zero sugar, diet]
+      forbidden_swap_keywords: [cola, soda, high fructose, hfcs]
       items:
         - item_name: "Cola Classic"
           brand_name: "FizzPop"
@@ -148,6 +157,7 @@
     tc:
       priorities: [gut_health]
       expected_verdicts: [good, caution]
+      expected_swap_keywords: [yogurt, kefir, skyr, probiotic, plain, culture, fermented]
       items:
         - item_name: "Plain Greek Yogurt"
           brand_name: "Hellas"
@@ -181,6 +191,7 @@
     tc:
       priorities: []
       expected_verdicts: [good]
+      expected_swap_keywords: [water, sparkling, mineral, spring, electrolyte]
       items:
         - item_name: "Spring Water"
           brand_name: "ClearSpring"
@@ -195,6 +206,254 @@
             nutrients:
               energyKcal: 0
               sodiumMg: 2
+  assert:
+    - type: javascript
+      value: file://assertions/validateScanResponse.ts
+    - type: javascript
+      value: file://assertions/noMedicalLanguage.ts
+    - type: javascript
+      value: file://assertions/personalization.ts
+    - type: javascript
+      value: file://assertions/verdictExpectation.ts
+
+- description: "Wild-caught sardines in water — heart health & sustainability (expect good)"
+  vars:
+    tc:
+      priorities: [heart_health, sustainability]
+      expected_verdicts: [good]
+      expected_swap_keywords: [sardines, mackerel, anchovies, wild-caught, pole-caught, herring, omega]
+      forbidden_swap_keywords: [farm-raised, farm raised, farmed]
+      items:
+        - item_name: "Wild Sardines in Water"
+          brand_name: "Wild Planet"
+          enriched:
+            source: open_food_facts
+            matched: true
+            itemName: "Wild sardines in water"
+            brandName: "Wild Planet"
+            ingredientsText: "Wild sardines, water, sea salt"
+            novaGroup: 1
+            nutriScore: a
+            categories: [Seafood, "Canned fish", Sardines]
+            nutrients:
+              energyKcal: 180
+              proteinG: 23
+              fatG: 10
+              saturatedFatG: 2.5
+              sodiumMg: 300
+  assert:
+    - type: javascript
+      value: file://assertions/validateScanResponse.ts
+    - type: javascript
+      value: file://assertions/noMedicalLanguage.ts
+    - type: javascript
+      value: file://assertions/personalization.ts
+    - type: javascript
+      value: file://assertions/verdictExpectation.ts
+    - type: icontains-any
+      value: [wild, sustainable, omega, sardine]
+
+- description: "Simply sea salt cottage cheese, no gums or stabilizers — gut health & weight management (expect good)"
+  vars:
+    tc:
+      priorities: [gut_health, weight_management]
+      expected_verdicts: [good]
+      expected_swap_keywords: [cottage cheese, skyr, kefir, yogurt, cultured, probiotic]
+      forbidden_swap_keywords: [carrageenan, gums]
+      items:
+        - item_name: "Cottage Cheese, Simply Sea Salt"
+          brand_name: "Good Culture"
+          enriched:
+            source: open_food_facts
+            matched: true
+            itemName: "2% Milkfat Cottage Cheese"
+            brandName: "Good Culture"
+            ingredientsText: "Cultured pasteurized milk and cream, sea salt, vitamin D2"
+            novaGroup: 2
+            nutriScore: b
+            categories: [Dairy, Cheese, "Cottage cheese"]
+            nutrients:
+              energyKcal: 90
+              proteinG: 13
+              fatG: 2.5
+              saturatedFatG: 1.5
+              sugarsG: 3
+              sodiumMg: 360
+  assert:
+    - type: javascript
+      value: file://assertions/validateScanResponse.ts
+    - type: javascript
+      value: file://assertions/noMedicalLanguage.ts
+    - type: javascript
+      value: file://assertions/personalization.ts
+    - type: javascript
+      value: file://assertions/verdictExpectation.ts
+    - type: icontains-any
+      value: [protein, cultures, probiotic, gut]
+
+- description: "Icelandic skyr, low added sugar relative to category — blood sugar & gut health (expect good)"
+  vars:
+    tc:
+      priorities: [blood_sugar, gut_health]
+      expected_verdicts: [good, caution]
+      expected_swap_keywords: [skyr, yogurt, kefir, plain, "low sugar", probiotic]
+      forbidden_swap_keywords: [honey oat, honey-oat]
+      items:
+        - item_name: "Icelandic Style Skyr, Vanilla"
+          brand_name: "Siggi's"
+          enriched:
+            source: open_food_facts
+            matched: true
+            itemName: "Vanilla skyr, 4% milkfat"
+            brandName: "Siggi's"
+            ingredientsText: "Pasteurized whole milk, cane sugar, live active cultures, pectin, vanilla extract"
+            novaGroup: 3
+            nutriScore: b
+            categories: [Dairy, Yogurt, Skyr]
+            nutrients:
+              energyKcal: 150
+              proteinG: 15
+              fatG: 4
+              saturatedFatG: 2.5
+              sugarsG: 9
+              addedSugarsG: 8
+              sodiumMg: 60
+  assert:
+    - type: javascript
+      value: file://assertions/validateScanResponse.ts
+    - type: javascript
+      value: file://assertions/noMedicalLanguage.ts
+    - type: javascript
+      value: file://assertions/personalization.ts
+    - type: javascript
+      value: file://assertions/verdictExpectation.ts
+
+- description: "Avocado oil mayo, no seed oils or added sugar — inflammation & heart health (expect good)"
+  vars:
+    tc:
+      priorities: [inflammation, heart_health]
+      expected_verdicts: [good]
+      expected_swap_keywords: ["avocado oil", "olive oil", mayo, aioli]
+      forbidden_swap_keywords: ["soybean oil", canola, "vegetable oil"]
+      items:
+        - item_name: "Avocado Oil Mayo"
+          brand_name: "Primal Kitchen"
+          enriched:
+            source: open_food_facts
+            matched: true
+            itemName: "Mayo with avocado oil"
+            brandName: "Primal Kitchen"
+            ingredientsText: "Avocado oil, water, cage-free egg whites, cage-free egg yolks, organic vinegar, sea salt, rosemary extract"
+            novaGroup: 3
+            categories: [Condiments, Mayonnaise]
+            nutrients:
+              energyKcal: 100
+              fatG: 11
+              saturatedFatG: 1.5
+              sugarsG: 0
+              sodiumMg: 85
+  assert:
+    - type: javascript
+      value: file://assertions/validateScanResponse.ts
+    - type: javascript
+      value: file://assertions/noMedicalLanguage.ts
+    - type: javascript
+      value: file://assertions/personalization.ts
+    - type: javascript
+      value: file://assertions/verdictExpectation.ts
+    - type: icontains-any
+      value: [avocado, "seed oil", omega, inflammat]
+
+- description: "Grass-fed Irish butter — heart health, saturated fat nuance (expect good/caution, no absolutist framing)"
+  vars:
+    tc:
+      priorities: [heart_health]
+      expected_verdicts: [good, caution]
+      expected_swap_keywords: [grass-fed, ghee, "olive oil", "avocado oil"]
+      forbidden_swap_keywords: [margarine, hydrogenated, "vegetable oil spread"]
+      items:
+        - item_name: "Pure Irish Butter"
+          brand_name: "Kerrygold"
+          enriched:
+            source: open_food_facts
+            matched: true
+            itemName: "Grass-fed butter, salted"
+            brandName: "Kerrygold"
+            ingredientsText: "Pasteurized cow's milk (cream), salt"
+            novaGroup: 2
+            categories: [Dairy, Butter, "Grass-fed dairy"]
+            nutrients:
+              energyKcal: 100
+              fatG: 11
+              saturatedFatG: 7
+              sodiumMg: 90
+  assert:
+    - type: javascript
+      value: file://assertions/validateScanResponse.ts
+    - type: javascript
+      value: file://assertions/noMedicalLanguage.ts
+    - type: javascript
+      value: file://assertions/personalization.ts
+    - type: javascript
+      value: file://assertions/verdictExpectation.ts
+
+- description: "Sparkling water with real fruit juice, no added sugar — weight management & blood sugar (expect good)"
+  vars:
+    tc:
+      priorities: [weight_management, blood_sugar]
+      expected_verdicts: [good]
+      expected_swap_keywords: ["sparkling water", seltzer, water, unsweetened]
+      forbidden_swap_keywords: ["diet soda", "artificial sweetener"]
+      items:
+        - item_name: "Raspberry Lime Sparkling Water"
+          brand_name: "Spindrift"
+          enriched:
+            source: open_food_facts
+            matched: true
+            itemName: "Sparkling water with raspberry and lime juice"
+            brandName: "Spindrift"
+            ingredientsText: "Carbonated water, raspberry juice, lime juice"
+            novaGroup: 2
+            nutriScore: a
+            categories: [Beverages, "Sparkling water", "Flavored water"]
+            nutrients:
+              energyKcal: 15
+              sugarsG: 3
+              addedSugarsG: 0
+              sodiumMg: 0
+  assert:
+    - type: javascript
+      value: file://assertions/validateScanResponse.ts
+    - type: javascript
+      value: file://assertions/noMedicalLanguage.ts
+    - type: javascript
+      value: file://assertions/personalization.ts
+    - type: javascript
+      value: file://assertions/verdictExpectation.ts
+
+- description: "Pasture-raised eggs — heart health & hormones (expect good)"
+  vars:
+    tc:
+      priorities: [heart_health, hormones]
+      expected_verdicts: [good]
+      expected_swap_keywords: [pasture-raised, free-range, "organic eggs", omega-3]
+      items:
+        - item_name: "Pasture-Raised Large Eggs"
+          brand_name: "Vital Farms"
+          enriched:
+            source: usda
+            matched: true
+            itemName: "Pasture-raised large eggs"
+            brandName: "Vital Farms"
+            ingredientsText: "Pasture-raised eggs"
+            novaGroup: 1
+            categories: [Eggs, "Dairy and Eggs"]
+            nutrients:
+              energyKcal: 70
+              proteinG: 6
+              fatG: 5
+              saturatedFatG: 1.6
+              sodiumMg: 65
   assert:
     - type: javascript
       value: file://assertions/validateScanResponse.ts

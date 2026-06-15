@@ -6,13 +6,12 @@ interface MobileShellProps {
 }
 
 /**
- * Mobile-first container shell that centers content on desktop
- * and provides full-width mobile layout.
+ * Phone-optimized shell for auth and standalone screens.
  */
 export function MobileShell({ children, className }: MobileShellProps) {
   return (
-    <div className={cn("mobile-shell", className)}>
-      {children}
+    <div className="app-shell">
+      <div className={cn("app-frame", className)}>{children}</div>
     </div>
   );
 }

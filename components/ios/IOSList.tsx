@@ -1,0 +1,35 @@
+import type { IOSListProps } from "./types";
+
+export function IOSList({ header, children, dark = false }: IOSListProps) {
+  const hc = dark ? "rgba(235,235,245,0.6)" : "rgba(60,60,67,0.6)";
+  const bg = dark ? "#1C1C1E" : "var(--color-surface, #fff)";
+
+  return (
+    <div>
+      {header && (
+        <div
+          style={{
+            fontFamily: "-apple-system, system-ui",
+            fontSize: 13,
+            color: hc,
+            textTransform: "uppercase",
+            padding: "8px 36px 6px",
+            letterSpacing: -0.08,
+          }}
+        >
+          {header}
+        </div>
+      )}
+      <div
+        style={{
+          background: bg,
+          borderRadius: 26,
+          margin: "0 16px",
+          overflow: "hidden",
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}

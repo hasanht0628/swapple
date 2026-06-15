@@ -35,27 +35,19 @@ export default function OnboardingPrioritiesPage() {
   const canContinue = selectedPriorities.length >= 1 && selectedPriorities.length <= 3;
 
   return (
-    <main className="flex min-h-dvh flex-col p-6">
-      {/* Step indicator */}
-      <div className="mb-8 text-center">
-        <p className="text-sm text-primary font-medium uppercase tracking-wide">
-          Step 2 / 3
-        </p>
+    <main className="flex min-h-[calc(100dvh-36px)] flex-col py-6">
+      <p className="sw-kicker mb-8 text-center text-primary">Step 2 / 3</p>
+
+      <div className="flex flex-1 flex-col justify-center">
+        <PrioritySelector onSelectionChange={setSelectedPriorities} />
       </div>
 
-      {/* Priority selector */}
-      <div className="flex-1 flex flex-col justify-center">
-        <PrioritySelector
-          onSelectionChange={setSelectedPriorities}
-        />
-      </div>
-
-      {/* Continue button */}
       <div className="pt-6">
         <button
+          type="button"
           onClick={handleContinue}
           disabled={!canContinue || isSaving}
-          className="w-full rounded-2xl bg-primary px-6 py-4 font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="sw-btn sw-btn-primary"
         >
           {isSaving ? "Saving..." : "Continue"}
         </button>

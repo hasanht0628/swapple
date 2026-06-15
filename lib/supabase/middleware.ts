@@ -46,7 +46,9 @@ export async function updateSession(request: NextRequest) {
   const isPublicRoute =
     pathname === "/" ||
     pathname.startsWith("/sign-in") ||
-    pathname.startsWith("/auth");
+    pathname.startsWith("/forgot-password") ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/learn");
 
   // API routes must never be redirected to an HTML page. They enforce their own
   // auth via requireUser() and return JSON (401, etc). Redirecting them breaks

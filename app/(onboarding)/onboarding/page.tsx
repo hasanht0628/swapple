@@ -4,54 +4,39 @@ import { VerdictBadge } from "@/components/scan/VerdictBadge";
 
 export default function OnboardingIntroPage() {
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center gap-8 p-6 text-center">
-      {/* Logo */}
-      <h1 className="text-3xl font-black">
-        Swa<span className="text-primary">pp</span>le
+    <main className="flex min-h-[calc(100dvh-36px)] flex-col items-center justify-center gap-8 py-8 text-center">
+      <h1 className="sw-h1">
+        <Link href="/home" className="hover:opacity-80">
+          Swa<span className="text-primary">pp</span>le
+        </Link>
       </h1>
-      
-      {/* Hero illustration area with floating badges */}
-      <div className="relative w-full max-w-xs h-64 bg-muted/10 rounded-2xl flex items-center justify-center">
-        {/* Placeholder for app hero illustration */}
-        <div className="text-6xl opacity-50">📱</div>
-        
-        {/* Floating verdict badges */}
+
+      <div className="sw-ph relative h-64 w-full max-w-xs">
+        <div className="absolute inset-0 flex items-center justify-center text-6xl opacity-40">
+          📱
+        </div>
         <div className="absolute top-4 left-4">
           <VerdictBadge verdict="good" />
         </div>
-        <div className="absolute bottom-6 right-4">
+        <div className="absolute right-4 bottom-6">
           <VerdictBadge verdict="avoid" />
         </div>
-        
-        {/* Small "APP HERO ILLUSTRATION" label */}
-        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-xs text-muted uppercase tracking-wide">
-          App Hero Illustration
-        </div>
+        <span className="absolute bottom-3 left-1/2 -translate-x-1/2">App Hero Illustration</span>
       </div>
-      
-      {/* Tagline and copy */}
+
       <div className="space-y-4">
-        <h2 className="text-sm font-bold uppercase tracking-widest text-muted">
-          SWAP UP.
-        </h2>
-        <div className="space-y-2">
-          <h3 className="text-2xl font-black">Point.</h3>
-          <p className="text-lg text-muted">Scan. Swap up.</p>
+        <p className="sw-kicker text-primary">Swap up.</p>
+        <div className="space-y-1">
+          <h2 className="sw-h1">Point.</h2>
+          <p className="font-display text-lg text-ink-2">Scan. Swap up.</p>
         </div>
       </div>
-      
-      {/* CTA */}
-      <Link
-        href="/onboarding/priorities"
-        className="rounded-2xl bg-primary px-8 py-4 font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
-      >
+
+      <Link href="/onboarding/priorities" className="sw-btn sw-btn-primary !w-auto px-10">
         Get started
       </Link>
-      
-      {/* Disclaimer */}
-      <p className="text-xs text-muted leading-relaxed max-w-sm">
-        {NON_MEDICAL_DISCLAIMER}
-      </p>
+
+      <p className="max-w-sm text-xs leading-relaxed text-muted">{NON_MEDICAL_DISCLAIMER}</p>
     </main>
   );
 }

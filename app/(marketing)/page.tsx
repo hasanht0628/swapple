@@ -1,18 +1,28 @@
-import { ResponsiveShell } from "@/components/layout/ResponsiveShell";
+import { MarketingNav } from "@/components/marketing/MarketingNav";
 import { HeroSection } from "@/components/marketing/HeroSection";
-import { FeatureGrid } from "@/components/marketing/FeatureGrid";
+import { HowItWorksSection } from "@/components/marketing/HowItWorksSection";
+import { VerdictSystemSection } from "@/components/marketing/VerdictSystemSection";
+import { PersonalizationSection } from "@/components/marketing/PersonalizationSection";
+import { ArticlesSection } from "@/components/marketing/ArticlesSection";
 import { PricingSection } from "@/components/marketing/PricingSection";
-import { DisclaimerFooter } from "@/components/marketing/DisclaimerFooter";
+import { CtaBand } from "@/components/marketing/CtaBand";
+import { MarketingFooter } from "@/components/marketing/MarketingFooter";
+import { PRICING_CARDS_ENABLED } from "@/lib/featureFlags";
 
 export default function MarketingPage() {
   return (
-    <ResponsiveShell variant="marketing">
-      <main className="flex min-h-dvh flex-col justify-center p-6 lg:px-8 space-y-16 lg:space-y-24">
+    <>
+      <MarketingNav showPricing={PRICING_CARDS_ENABLED} />
+      <main id="top">
         <HeroSection />
-        <FeatureGrid />
-        <PricingSection />
-        <DisclaimerFooter />
+        <HowItWorksSection />
+        <VerdictSystemSection />
+        <PersonalizationSection />
+        <ArticlesSection />
+        {PRICING_CARDS_ENABLED ? <PricingSection /> : null}
+        <CtaBand />
       </main>
-    </ResponsiveShell>
+      <MarketingFooter showPricing={PRICING_CARDS_ENABLED} />
+    </>
   );
 }

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { IcStar } from "@/components/icons";
 import { priorityLabel } from "@/lib/priorities";
+import { getPriorityIcon } from "@/lib/priorities/icons";
 import { PrioritySelector } from "../onboarding/PrioritySelector";
 
 interface EditablePrioritiesProps {
@@ -9,10 +11,7 @@ interface EditablePrioritiesProps {
   onSave: (priorities: string[]) => Promise<void>;
 }
 
-export function EditablePriorities({
-  initialPriorities,
-  onSave,
-}: EditablePrioritiesProps) {
+export function EditablePriorities({ initialPriorities, onSave }: EditablePrioritiesProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [selectedPriorities, setSelectedPriorities] = useState(initialPriorities);
@@ -38,10 +37,11 @@ export function EditablePriorities({
     return (
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">Edit your priorities</h2>
+          <h2 className="sw-h2">Edit your priorities</h2>
           <button
+            type="button"
             onClick={handleCancel}
-            className="text-sm text-muted hover:text-foreground"
+            className="text-sm font-semibold text-muted hover:text-foreground"
           >
             Cancel
           </button>
@@ -52,15 +52,14 @@ export function EditablePriorities({
           onSelectionChange={setSelectedPriorities}
         />
 
-        <div className="flex gap-3">
-          <button
-            onClick={handleSave}
-            disabled={isSaving || selectedPriorities.length === 0}
-            className="flex-1 rounded-xl bg-primary px-4 py-3 font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSaving ? "Saving..." : "Save changes"}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={isSaving || selectedPriorities.length === 0}
+          className="sw-btn sw-btn-primary disabled:cursor-not-allowed"
+        >
+          {isSaving ? "Saving..." : "Save changes"}
+        </button>
       </section>
     );
   }
@@ -68,19 +67,21 @@ export function EditablePriorities({
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold">Your priorities</h2>
+        <h2 className="sw-h2">Your priorities</h2>
         <div className="flex items-center gap-3">
           {initialPriorities.length < 3 && (
             <button
+              type="button"
               onClick={() => setIsEditing(true)}
-              className="text-sm text-primary hover:underline"
+              className="text-sm font-semibold text-primary hover:underline"
             >
               + Add
             </button>
           )}
           <button
+            type="button"
             onClick={() => setIsEditing(true)}
-            className="text-sm text-primary hover:underline"
+            className="text-sm font-semibold text-primary hover:underline"
           >
             Edit
           </button>
@@ -88,13 +89,16 @@ export function EditablePriorities({
       </div>
 
       {initialPriorities.length === 0 ? (
-        <div className="text-center py-8">
-          <div className="text-4xl mb-4">🎯</div>
+        <div className="py-8 text-center">
+          <div className="mb-4 flex justify-center text-primary">
+            <IcStar s={40} />
+          </div>
           <div className="space-y-2">
-            <p className="font-medium text-muted">No priorities set</p>
+            <p className="font-bold text-muted">No priorities set</p>
             <button
+              type="button"
               onClick={() => setIsEditing(true)}
-              className="text-sm text-primary hover:underline"
+              className="text-sm font-semibold text-primary hover:underline"
             >
               Add your first priority
             </button>
@@ -102,14 +106,15 @@ export function EditablePriorities({
         </div>
       ) : (
         <div className="flex flex-wrap gap-2">
-          {initialPriorities.map((priorityId) => (
-            <div
-              key={priorityId}
-              className="inline-flex items-center gap-2 px-3 py-2 bg-primary-soft rounded-full text-sm font-medium"
-            >
-              <span>{priorityLabel(priorityId)}</span>
-            </div>
-          ))}
+          {initialPriorities.map((priorityId) => {
+            const Icon = getPriorityIcon(priorityId);
+            return (
+              <span key={priorityId} className="sw-chip inline-flex items-center gap-1.5">
+                {Icon ? <Icon s={14} /> : null}
+                {priorityLabel(priorityId)}
+              </span>
+            );
+          })}
         </div>
       )}
     </section>

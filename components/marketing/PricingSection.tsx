@@ -1,60 +1,87 @@
 import Link from "next/link";
+import { IcCheck } from "@/components/icons";
+import { MarketingWrap } from "./MarketingWrap";
 
 export function PricingSection() {
   return (
-    <section className="space-y-8 lg:space-y-12">
-      <div className="text-center space-y-4">
-        <h2 className="text-2xl lg:text-4xl font-bold">Simple, transparent pricing</h2>
-        <p className="text-muted lg:text-lg">Start free, upgrade for unlimited brand recommendations</p>
-      </div>
-
-      <div className="space-y-6 lg:grid lg:grid-cols-2 lg:gap-8 lg:space-y-0 lg:max-w-4xl lg:mx-auto">
-        {/* Free Plan */}
-        <div className="bg-surface rounded-2xl p-6 lg:p-8 shadow-card">
-          <div className="space-y-6">
-            <div>
-              <h3 className="font-semibold text-xl lg:text-2xl">Free</h3>
-              <p className="text-3xl lg:text-4xl font-bold">$0</p>
-            </div>
-            <ul className="space-y-3 text-sm lg:text-base text-muted">
-              <li>✓ Unlimited scans</li>
-              <li>✓ Basic verdicts (good/caution/avoid)</li>
-              <li>✓ Full detail on good items</li>
-              <li>✓ Save and track swaps</li>
-            </ul>
-          </div>
+    <section id="pricing" className="marketing-section bg-surface">
+      <MarketingWrap>
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="marketing-eyebrow">Pricing</span>
+          <h2 className="marketing-display mt-3.5 text-[clamp(1.875rem,4vw,2.75rem)]">
+            Verdicts are free.
+            <br />
+            Forever.
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted">
+            Upgrade only when you want the ranked brand swaps. No ads, no sponsored
+            results, either way.
+          </p>
         </div>
 
-        {/* Swapple Plus */}
-        <div className="bg-primary rounded-2xl p-6 lg:p-8 shadow-card text-primary-foreground relative overflow-hidden">
-          <div className="absolute top-6 right-6">
-            <span className="bg-white/20 rounded-full px-3 py-1 text-xs font-semibold">
-              RECOMMENDED
-            </span>
-          </div>
-          <div className="space-y-6">
-            <div>
-              <h3 className="font-semibold text-xl lg:text-2xl">Swapple Plus</h3>
-              <div className="flex items-baseline gap-2">
-                <p className="text-4xl lg:text-5xl font-bold">$9</p>
-                <span className="text-sm lg:text-base opacity-90">per month</span>
-              </div>
-            </div>
-            <ul className="space-y-3 text-sm lg:text-base">
-              <li>✓ Everything in Free</li>
-              <li>✓ Detailed analysis on all items</li>
-              <li>✓ Ranked brand recommendations</li>
-              <li>✓ Priority tradeoff insights</li>
+        <div className="mx-auto mt-12 grid max-w-4xl gap-6 md:grid-cols-2">
+          <div className="rounded-3xl border border-border bg-background p-8">
+            <p className="text-sm font-semibold uppercase tracking-wide text-muted">Free</p>
+            <p className="marketing-display mt-2 text-5xl">$0</p>
+            <p className="mt-1 text-sm text-muted">Everything you need to shop smarter</p>
+            <ul className="mt-8 space-y-3 text-sm">
+              <li className="flex items-start gap-2.5">
+                <IcCheck s={19} sw={2.3} className="shrink-0" />
+                Unlimited scans &amp; verdicts
+              </li>
+              <li className="flex items-start gap-2.5">
+                <IcCheck s={19} sw={2.3} className="shrink-0" />
+                Personalized to your goals
+              </li>
+              <li className="flex items-start gap-2.5">
+                <IcCheck s={19} sw={2.3} className="shrink-0" />
+                Full Swapple Guide library
+              </li>
             </ul>
             <Link
               href="/sign-in"
-              className="block w-full rounded-xl bg-white/20 backdrop-blur py-3 lg:py-4 text-center font-semibold transition-colors hover:bg-white/30"
+              className="mt-8 flex w-full items-center justify-center rounded-full border border-border bg-surface px-5 py-3 text-sm font-semibold transition-colors hover:bg-background"
+            >
+              Get started
+            </Link>
+          </div>
+
+          <div className="relative rounded-3xl bg-primary p-8 text-primary-foreground shadow-[0_20px_50px_rgba(124,58,237,0.25)]">
+            <span className="absolute right-6 top-6 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold">
+              Most popular
+            </span>
+            <p className="text-sm font-semibold uppercase tracking-wide opacity-90">Plus</p>
+            <p className="marketing-display mt-2 text-5xl">
+              $9<small className="text-lg font-semibold opacity-80"> / month</small>
+            </p>
+            <p className="mt-1 text-sm opacity-80">For people who want the better swap</p>
+            <ul className="mt-8 space-y-3 text-sm">
+              <li className="flex items-start gap-2.5">
+                <IcCheck s={19} sw={2.3} className="shrink-0" />
+                Everything in Free
+              </li>
+              <li className="flex items-start gap-2.5">
+                <IcCheck s={19} sw={2.3} className="shrink-0" />
+                Ranked brand swaps for every item
+              </li>
+              <li className="flex items-start gap-2.5">
+                <IcCheck s={19} sw={2.3} className="shrink-0" />
+                Pantry score &amp; swap tracker
+              </li>
+              <li className="flex items-start gap-2.5">
+                <IcCheck s={19} sw={2.3} className="shrink-0" />
+                Cancel anytime
+              </li>
+            </ul>
+            <Link
+              href="/sign-in"
+              className="mt-8 flex w-full items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-white/90"
             >
               Start free trial
             </Link>
           </div>
         </div>
-      </div>
+      </MarketingWrap>
     </section>
   );
 }

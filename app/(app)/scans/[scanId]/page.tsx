@@ -8,7 +8,7 @@ import { serializeScanItem } from "@/lib/scans";
 import type { ScanItemDTO } from "@/types/scan";
 import type { ScanItemRow } from "@/types/database";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 interface ScanResultsPageProps {
   params: Promise<{ scanId: string }>;
@@ -18,7 +18,6 @@ export default async function ScanResultsPage({ params }: ScanResultsPageProps) 
   const { scanId } = await params;
   const { user, profile, supabase } = await requireUserWithProfile();
 
-  // Fetch scan and items
   const { data: scan } = await supabase
     .from("scans")
     .select("*")
@@ -45,54 +44,44 @@ export default async function ScanResultsPage({ params }: ScanResultsPageProps) 
   const priorityLabels = priorities.map(priorityLabel);
 
   return (
-    <main className="flex flex-col gap-6 lg:gap-8 p-6 lg:px-8">
-      {/* Header */}
-      <div className="space-y-4 lg:space-y-6">
+    <main className="flex flex-col gap-6 pb-4">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="text-sm lg:text-base font-medium text-muted uppercase tracking-wide">
-            Cart Scan
-          </div>
+          <p className="sw-kicker">Cart Scan</p>
           <Link
             href="/capture"
-            className="flex items-center gap-1 text-sm lg:text-base text-primary hover:underline"
+            className="flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
           >
             <span>⚡</span>
             Rescan
           </Link>
         </div>
 
-        <div className="space-y-3">
-          <h1 className="text-2xl lg:text-4xl font-black text-center lg:text-left">
-            {items.length} item{items.length !== 1 ? 's' : ''} found
+        <div className="space-y-2">
+          <h1 className="sw-h1 text-center lg:text-left">
+            {items.length} item{items.length !== 1 ? "s" : ""} found
           </h1>
           {priorities.length > 0 && (
-            <p className="text-muted lg:text-lg text-center lg:text-left">
-              Ranked for <strong>{priorityLabels.join(' & ')}</strong>
+            <p className="sw-sub text-center lg:text-left">
+              Ranked for <strong className="text-foreground">{priorityLabels.join(" & ")}</strong>
             </p>
           )}
         </div>
 
-        {/* Summary pills */}
         <VerdictSummaryPills items={items} />
       </div>
 
-      {/* Items list */}
-      <div className="space-y-4 lg:space-y-6">
+      <div className="space-y-3">
         {items.map((item) => (
-          <ScanItemCard
-            key={item.id}
-            item={item}
-            scanId={scanId}
-            showLockHint={true}
-          />
+          <ScanItemCard key={item.id} item={item} scanId={scanId} showLockHint={true} />
         ))}
       </div>
 
       {items.length === 0 && (
-        <div className="text-center py-12 lg:py-16 text-muted">
-          <div className="text-4xl lg:text-6xl mb-4 lg:mb-6">🔍</div>
-          <p className="text-lg lg:text-xl font-medium mb-2 lg:mb-4">No items found</p>
-          <p className="text-sm lg:text-base">
+        <div className="py-12 text-center text-muted">
+          <div className="mb-4 text-4xl">🔍</div>
+          <p className="sw-h2 mb-2">No items found</p>
+          <p className="sw-sub text-sm">
             Try taking another photo with better lighting or closer to the products.
           </p>
         </div>

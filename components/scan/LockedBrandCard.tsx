@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { IcLock, IcShield } from "@/components/icons";
 
 interface LockedBrandCardProps {
   verdictType: "caution" | "avoid";
@@ -13,13 +14,11 @@ export function LockedBrandCard({
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-surface border border-border p-6 space-y-4">
-      {/* Blur overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/50 to-surface backdrop-blur-sm" />
-      
-      {/* Lock icon */}
+
       <div className="relative z-10 flex justify-center">
-        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-          <span className="text-xl">🔒</span>
+        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+          <IcLock s={24} />
         </div>
       </div>
 
@@ -40,14 +39,14 @@ export function LockedBrandCard({
           >
             Upgrade to Swapple Plus
           </Link>
-          
-          <p className="text-xs text-muted leading-relaxed">
-            🛡️ {trustStatement}
+
+          <p className="flex items-start justify-center gap-1.5 text-xs text-muted leading-relaxed">
+            <IcShield s={14} className="mt-0.5 shrink-0" />
+            {trustStatement}
           </p>
         </div>
       </div>
 
-      {/* Blurred preview content */}
       <div className="absolute top-6 left-6 right-6 space-y-3 opacity-30">
         {Array.from({ length: brandCount }).map((_, i) => (
           <div key={i} className="flex items-center gap-3 p-3 bg-surface rounded-xl border border-border">

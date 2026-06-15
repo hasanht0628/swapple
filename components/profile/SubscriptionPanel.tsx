@@ -40,14 +40,12 @@ export function SubscriptionPanel({
 
   if (subscriptionStatus === "paid") {
     return (
-      <section className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-6 text-primary-foreground">
+      <section className="sw-card overflow-hidden bg-primary p-6 text-primary-foreground">
         <div className="space-y-4">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="font-semibold text-lg">Swapple Plus</h2>
-              <p className="text-primary-foreground/80 text-sm">
-                $9 / month
-              </p>
+              <h2 className="sw-h2 text-white">Swapple Plus</h2>
+              <p className="text-sm text-white/80">$9 / month</p>
             </div>
             <div className="text-2xl">✨</div>
           </div>
@@ -59,9 +57,10 @@ export function SubscriptionPanel({
           </div>
 
           <button
+            type="button"
             onClick={handleManage}
             disabled={isLoading}
-            className="w-full rounded-xl bg-white/20 backdrop-blur px-4 py-3 font-semibold transition-colors hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="sw-btn sw-btn-ghost !w-full border-white/30 text-white hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? "Loading..." : "Manage plan"}
           </button>
@@ -71,22 +70,22 @@ export function SubscriptionPanel({
   }
 
   return (
-    <section className="bg-surface rounded-2xl p-6 border border-border shadow-card">
+    <section className="sw-card p-6">
       <div className="space-y-4">
         <div>
-          <h2 className="font-semibold">Upgrade to Swapple Plus</h2>
-          <p className="text-muted text-sm">
+          <h2 className="sw-h2">Upgrade to Swapple Plus</h2>
+          <p className="text-sm text-ink-2">
             Get detailed analysis and brand recommendations for all items
           </p>
         </div>
 
         <div className="space-y-3">
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-primary">$9</span>
-            <span className="text-muted text-sm">per month</span>
+            <span className="font-display text-3xl font-extrabold text-primary">$9</span>
+            <span className="text-sm text-muted">per month</span>
           </div>
 
-          <div className="space-y-2 text-sm text-muted">
+          <div className="space-y-2 text-sm text-ink-2">
             <p>✓ Everything in Free</p>
             <p>✓ Detailed analysis on caution/avoid items</p>
             <p>✓ Ranked brand recommendations</p>
@@ -95,9 +94,10 @@ export function SubscriptionPanel({
         </div>
 
         <button
+          type="button"
           onClick={handleUpgrade}
           disabled={isLoading}
-          className="w-full rounded-xl bg-primary px-4 py-3 font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="sw-btn sw-btn-primary disabled:cursor-not-allowed"
         >
           {isLoading ? "Loading..." : "Upgrade now"}
         </button>

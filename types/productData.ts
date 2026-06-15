@@ -3,7 +3,12 @@
  * See lib/productData/* — Open Food Facts -> USDA -> GS1 -> model fallback.
  */
 
-export type ProductDataSource = "open_food_facts" | "usda" | "gs1" | "model";
+export type ProductDataSource =
+  | "open_food_facts"
+  | "usda"
+  | "gs1"
+  | "web"
+  | "model";
 
 /**
  * Normalized, source-agnostic product facts that we feed into the OpenAI

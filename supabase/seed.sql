@@ -1,7 +1,7 @@
 -- Swapple seed data (local development only).
 --
 -- Profiles are normally created automatically by the on_auth_user_created
--- trigger when a user signs up via magic link. For local seeding you can
+-- trigger when a user signs up with email + password. For local seeding you can
 -- create an auth user first (e.g. via the Supabase Studio Auth tab or the
 -- admin API), then attach demo scans below by substituting the user id.
 --

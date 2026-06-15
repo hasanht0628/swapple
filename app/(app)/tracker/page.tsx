@@ -1,8 +1,5 @@
 import { StatsCards } from "@/components/tracker/StatsCards";
-import {
-  SavedSwapsList,
-  type SavedSwapItem,
-} from "@/components/tracker/SavedSwapsList";
+import { SavedSwapsList, type SavedSwapItem } from "@/components/tracker/SavedSwapsList";
 import { requireUser } from "@/lib/auth/requireUser";
 import { type BrandRecommendation } from "@/types/scan";
 
@@ -12,11 +9,7 @@ export default async function TrackerPage() {
   const { user, supabase } = await requireUser();
 
   const now = new Date();
-  const startOfMonth = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    1,
-  ).toISOString();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
   const [scansResult, swapsCountResult, savedSwapsResult] = await Promise.all([
     supabase
@@ -40,22 +33,18 @@ export default async function TrackerPage() {
   const scansThisMonth = scansResult.count ?? 0;
   const swapsMade = swapsCountResult.count ?? 0;
 
-  const savedSwaps: SavedSwapItem[] = (savedSwapsResult.data ?? []).map(
-    (item) => ({
-      id: item.id,
-      item_name: item.item_name,
-      saved_recommendation: item.saved_recommendation as BrandRecommendation | null,
-      swapped: item.swapped,
-    }),
-  );
+  const savedSwaps: SavedSwapItem[] = (savedSwapsResult.data ?? []).map((item) => ({
+    id: item.id,
+    item_name: item.item_name,
+    saved_recommendation: item.saved_recommendation as BrandRecommendation | null,
+    swapped: item.swapped,
+  }));
 
   return (
-    <main className="flex flex-col gap-8 lg:gap-12 p-6 lg:px-8">
+    <main className="flex flex-col gap-8 pb-4">
       <div>
-        <h1 className="text-2xl lg:text-4xl font-black mb-2 lg:mb-4 text-center lg:text-left">
-          Your progress
-        </h1>
-        <p className="text-muted text-sm lg:text-base text-center lg:text-left">
+        <h1 className="sw-h1 mb-2 text-center lg:text-left">Your progress</h1>
+        <p className="sw-sub text-center text-sm lg:text-left">
           Track your scans and see how you&apos;re improving your choices
         </p>
       </div>

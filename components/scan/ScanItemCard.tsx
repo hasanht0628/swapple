@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { IcChevron, IcLock } from "@/components/icons";
 import { type ScanItemDTO } from "@/types/scan";
 import { VerdictBadge } from "./VerdictBadge";
 import { cn } from "@/lib/utils";
@@ -16,9 +17,9 @@ export function ScanItemCard({
   className,
   showLockHint = true,
 }: ScanItemCardProps) {
-  const showsLockTeaser = 
-    showLockHint && 
-    item.locked && 
+  const showsLockTeaser =
+    showLockHint &&
+    item.locked &&
     (item.verdict === "caution" || item.verdict === "avoid");
 
   return (
@@ -27,12 +28,10 @@ export function ScanItemCard({
       className={cn("block", className)}
     >
       <div className="flex items-center gap-4 p-4 bg-surface rounded-2xl border border-border hover:shadow-md transition-shadow">
-        {/* Placeholder thumbnail */}
         <div className="flex-shrink-0 w-12 h-12 bg-muted/20 rounded-lg flex items-center justify-center text-muted text-xs">
           📦
         </div>
 
-        {/* Content */}
         <div className="flex-1 min-w-0 space-y-1">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
@@ -54,27 +53,14 @@ export function ScanItemCard({
 
           {showsLockTeaser && (
             <div className="flex items-center gap-1 text-xs text-primary">
-              <span>🔒</span>
+              <IcLock s={14} />
               <span>See better brands</span>
             </div>
           )}
         </div>
 
-        {/* Chevron */}
         <div className="flex-shrink-0 text-muted">
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
+          <IcChevron s={20} sw={2} />
         </div>
       </div>
     </Link>

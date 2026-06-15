@@ -1,0 +1,25 @@
+You are grading ONLY the `brand_recommendations` arrays in a Swapple pass-2 scan analysis JSON output.
+
+Use the test input (`tc`) for context: user priorities, scanned item(s), and any `expected_swap_keywords` / `forbidden_swap_keywords` hints. Those hints describe the kind of swaps we expect for this case — use them as guidance, not as a literal keyword checklist.
+
+For each scanned item, evaluate every entry in `brand_recommendations`:
+
+1. **Plausibility** — Each swap must look like a real branded product (specific brand + product name), not a placeholder or generic label ("Better Brand", "Healthy Option", "Alternative Product").
+
+2. **Not the same product** — Swaps must not be the same brand + product as the scanned item, or a trivial rename of it.
+
+3. **Better for user priorities** — Each swap's `why_better` must explain, in concrete nutritional terms, why it is a better fit for the user's stated priorities (from `tc.priorities`). Vague lines like "similar nutritional profile" or "comparable benefits" without tying to priorities are insufficient.
+
+4. **Case-appropriate direction** — Swaps should move in the right direction for this product category and verdict:
+   - For `avoid` / `caution` items: recommend meaningfully better alternatives, not equally poor options.
+   - For `good` items: recommend other strong options in the same category ("other great options"), not worse substitutes.
+   - Respect `forbidden_swap_keywords` on recommended brand + product names when provided.
+
+5. **Ranking quality** — Rank 1 should be the strongest swap; lower ranks may have modest tradeoffs but must still be defensible.
+
+Scoring:
+- `pass: true` and `score: 1.0` only if ALL recommendations for ALL items meet the criteria above.
+- `pass: false` and `score: 0.0` if any recommendation fails plausibility, duplicates the scanned product, ignores priorities, or points the user toward an inappropriate swap.
+- Use intermediate scores (0.3–0.7) only when most swaps are good but one is weak; set `pass: false` unless every swap is acceptable.
+
+Return JSON: {"reason": "<brief per-item summary>", "pass": boolean, "score": number}

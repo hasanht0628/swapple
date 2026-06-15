@@ -28,6 +28,8 @@ tests: file://datasets/scanAnalysis.yaml
 defaultTest:
   assert:
     - type: is-json
+    - type: javascript
+      value: file://assertions/brandRecommendations.ts
     - type: cost
       threshold: 0.05
     - type: latency

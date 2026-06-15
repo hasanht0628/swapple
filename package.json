@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "eval": "promptfoo eval -c evals/promptfooconfig.yaml --env-file .env.local",
-    "eval:view": "promptfoo view -y"
+    "eval:quality": "promptfoo eval -c evals/promptfooconfig.quality.yaml --env-file .env.local",
+    "eval:view": "promptfoo view -y",
+    "test:product-data": "node --import tsx --test lib/productData/*.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

@@ -20,12 +20,16 @@ evals/
   prompts/
     scanAnalysisPrompt.ts       # wraps SYSTEM_PROMPT + buildAnalysisPrompt() for promptfoo
   datasets/
-    scanAnalysis.yaml           # 6 test cases (mock enriched product data + priorities)
+    scanAnalysis.yaml           # 13 test cases (mock enriched product data + priorities)
   assertions/
     validateScanResponse.ts     # parses output with the production zod schema
+    brandRecommendations.ts     # swap count, plausibility, priority fit, case keywords
     noMedicalLanguage.ts        # blocks diagnose/prescribe/cure/treatment language
     personalization.ts          # free_reason present + references user priorities
     verdictExpectation.ts       # verdict ∈ the case's expected set
+  rubrics/
+    brandRecommendationsCriteria.txt   # LLM judge rubric (quality eval only)
+    brandRecommendationsJudgePrompt.txt
   providers/
     scanResponseFormat.json     # generated response_format (OpenAI structured output)
   output/                       # generated eval results (gitignored)
@@ -49,8 +53,11 @@ Each case nests its inputs under a single `tc` object so `priorities` / `items` 
 From the repo root:
 
 ```bash
-# Run the suite (loads OPENAI_API_KEY + PROMPTFOO_API_KEY from .env.local)
+# CI gate — deterministic keyword + schema checks (fast)
 npm run eval
+
+# Quality gate — CI checks + LLM-as-judge for brand_recommendations (slower/costlier)
+npm run eval:quality
 
 # Open the local results viewer
 npm run eval:view
@@ -60,18 +67,21 @@ Or directly:
 
 ```bash
 npx promptfoo eval -c evals/promptfooconfig.yaml --env-file .env.local
+npx promptfoo eval -c evals/promptfooconfig.quality.yaml --env-file .env.local
 ```
 
 ### Requirements
 
-- **`OPENAI_API_KEY`** in `.env.local` — required; the eval calls `gpt-4o`.
+- **`OPENAI_API_KEY`** in `.env.local` — required; the eval calls `gpt-4o` (SUT) and `gpt-4o-mini` (LLM judge in quality eval).
   The account needs available quota (a key with `insufficient_quota` returns
   HTTP 429 and every case errors).
 - **`PROMPTFOO_API_KEY`** in `.env.local` — optional; only needed to publish/share
   runs to the Promptfoo cloud. Local runs work without it. Use `--no-share` to
   never upload.
 
-## Assertions (every case)
+## Assertions
+
+### CI (`npm run eval` — `promptfooconfig.yaml`)
 
 - **JSON + schema** — output parses with the production `scanResponseSchema`
   (verdict enum, impact enum, confidence range, required fields, etc.).
@@ -79,9 +89,24 @@ npx promptfoo eval -c evals/promptfooconfig.yaml --env-file .env.local
 - **`free_reason` present** and, when priorities are given, **`priority_tradeoffs`
   reference those priorities** (personalization).
 - **No medical-claim language** — no `diagnose` / `prescribe` / `cure` /
-  `medical treatment` / "you have <disease>" phrasing.
+  `medical treatment` / "you have <disease>" phrasing (including swap `why_better`
+  and `tradeoffs`).
+- **Brand recommendations (keywords)** — 1–3 ranked swaps per item; non-placeholder
+  brand/product names; `why_better` references user priorities when set; at least
+  one swap matches `tc.expected_swap_keywords`; none match `tc.forbidden_swap_keywords`
+  on recommended brand + product name.
 - Plus per-case `icontains-any` keyword checks (e.g. salmon → contaminant/omega).
 - Default: `is-json`, a cost ceiling, and a latency ceiling.
+
+### Quality (`npm run eval:quality` — `promptfooconfig.quality.yaml`)
+
+Everything in the CI suite, plus:
+
+- **Brand recommendations (LLM judge)** — `llm-rubric` graded by `gpt-4o-mini`
+  using `rubrics/brandRecommendationsCriteria.txt`. The judge receives the full
+  test input (`tc`: priorities, scanned items, expected/forbidden swap hints) and
+  the model JSON output. Requires `score >= 0.8` and `pass: true`. Use before
+  prompt changes or on a schedule — not required on every PR.
 
 ## Regenerating the response_format schema
 
@@ -102,6 +127,8 @@ Append to `datasets/scanAnalysis.yaml`:
     tc:
       priorities: [blood_sugar]          # ids from lib/priorities.ts
       expected_verdicts: [avoid, caution]
+      expected_swap_keywords: [oats, unsweetened, plain]   # at least one swap must match
+      forbidden_swap_keywords: [honey oat]                 # optional blocklist
       items:
         - item_name: "Product name"
           brand_name: "Brand"

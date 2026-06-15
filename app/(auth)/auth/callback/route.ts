@@ -2,10 +2,11 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * Supabase magic-link callback. Exchanges the auth code for a session, then
- * redirects:
- *  - onboarding incomplete -> /onboarding
- *  - otherwise             -> /home (or the `next` param)
+ * Supabase auth callback. Exchanges the auth code for a session (email
+ * confirmation, password recovery, etc.), then redirects:
+ *  - `next` param set       -> that path (e.g. /auth/reset-password)
+ *  - onboarding incomplete  -> /onboarding
+ *  - otherwise              -> /home
  */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);

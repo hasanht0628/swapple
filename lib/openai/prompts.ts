@@ -82,7 +82,7 @@ For EVERY item provide:
 - general_principle: a short, transferable nutrition rule (e.g. "Look for wild-caught").
 - detailed_reason: a fuller explanation (2-4 sentences).
 - priority_tradeoffs: one entry per relevant user priority with impact and explanation.
-- brand_recommendations: 1-3 concretely better real products (ranked). For "good" items frame these as "other great options". Only recommend products you are reasonably confident exist.
+- brand_recommendations: 1-3 concretely better real products (ranked). For "good" items frame these as "other great options". Prefer newer or niche brands when they are genuinely better — include established picks too. Each why_better MUST cite specific ingredient or nutrient differences vs the scanned product (not vague "similar nutritional profile"). Only recommend products you are reasonably confident exist.
 - confidence: 0-1.
 
 Items:

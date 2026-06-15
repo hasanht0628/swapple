@@ -12,6 +12,7 @@ import {
   identifyResponseSchema,
 } from "./schema";
 import { enrichItems } from "@/lib/productData/enrich";
+import { verifyBrandRecommendations } from "@/lib/productData/verifyBrandRecommendations";
 import type { OpenAIScanResponse } from "@/types/scan";
 import type { IdentifiedItem, EnrichedProductData } from "@/types/productData";
 
@@ -100,10 +101,11 @@ export interface AnalyzeScanResult {
 }
 
 /**
- * Full two-pass orchestration:
+ * Full scan orchestration:
  *   1. identify items from the image
  *   2. enrich each item (OFF -> USDA -> GS1 -> model)
- *   3. analyze with enriched context
+ *   3. analyze with enriched context (Pass 2)
+ *   4. verify brand recommendations against real ingredients (Pass 3)
  *
  * Throws on hard failures; enrichment itself fails gracefully per item.
  */
@@ -128,10 +130,21 @@ export async function analyzeScan(args: {
     items: itemsForAnalysis,
   });
 
+  const scannedByItemName = new Map<string, EnrichedProductData | undefined>();
+  itemsForAnalysis.forEach((it) => {
+    scannedByItemName.set(it.item_name, it.enriched);
+  });
+
+  const verifiedResponse = await verifyBrandRecommendations({
+    response,
+    priorities: args.priorities,
+    scannedByItemName,
+  });
+
   const sourcesByItemName = new Map<string, string>();
   itemsForAnalysis.forEach((it) => {
     if (it.enriched) sourcesByItemName.set(it.item_name, it.enriched.source);
   });
 
-  return { response, sourcesByItemName };
+  return { response: verifiedResponse, sourcesByItemName };
 }

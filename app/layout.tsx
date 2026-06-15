@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const displayFont = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const bodyFont = Hanken_Grotesk({
+  variable: "--font-hanken",
   subsets: ["latin"],
 });
 
@@ -16,6 +16,14 @@ export const metadata: Metadata = {
   title: "Swapple — Point. Scan. Swap up.",
   description:
     "Scan any product, shelf, or cart and get nutritional verdicts tuned to your health priorities.",
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -26,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${displayFont.variable} ${bodyFont.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground">{children}</body>
     </html>

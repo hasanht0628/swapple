@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { IcBolt, IcClose } from "@/components/icons";
 import { processImageForUpload, isHeicFile } from "@/lib/image/convertHeic";
 
 export function CaptureUploader() {
@@ -251,19 +253,19 @@ export function CaptureUploader() {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-black text-white">
+    <div className="sw-screen !absolute bg-black text-white">
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-10">
         <button
           onClick={() => router.back()}
           className="w-10 h-10 rounded-full bg-black/50 flex items-center justify-center"
         >
-          ✕
+          <IcClose s={20} stroke="#fff" />
         </button>
-        <div className="flex items-center gap-2 text-sm font-medium">
-          <span className="text-xl">⚡</span>
-          Swapple
-        </div>
+        <Link href="/home" className="flex items-center gap-2 text-sm font-medium">
+          <IcBolt s={20} stroke="#fff" sw={1.6} />
+          Swa<span className="text-primary">pp</span>le
+        </Link>
         <div className="w-10" /> {/* Spacer */}
       </div>
 
@@ -396,8 +398,18 @@ export function CaptureUploader() {
 
       {/* Error display */}
       {error && (
-        <div className="absolute bottom-24 left-4 right-4 bg-red-600 text-white p-3 rounded-xl text-sm text-center">
+        <div className="absolute bottom-24 left-4 right-4 rounded-[14px] bg-verdict-avoid p-3 text-center text-sm text-white">
           {error}
+        </div>
+      )}
+
+      {/* Analyzing overlay */}
+      {(isUploading || isConverting) && (
+        <div className="scan-veil">
+          <div className="scan-ring" aria-hidden="true" />
+          <p className="sw-kicker text-foreground">
+            {isConverting ? "Converting photo…" : "Analyzing scan…"}
+          </p>
         </div>
       )}
     </div>

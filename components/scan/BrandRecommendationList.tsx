@@ -20,9 +20,9 @@ export function BrandRecommendationList({
   className,
 }: BrandRecommendationListProps) {
   const [savingIds, setSavingIds] = useState<Set<number>>(new Set());
-  const [savedRecommendationRank, setSavedRecommendationRank] = useState<
-    number | null
-  >(initialSavedRecommendationRank);
+  const [savedRecommendationRank, setSavedRecommendationRank] = useState<number | null>(
+    initialSavedRecommendationRank,
+  );
 
   const handleSave = async (recommendation: BrandRecommendation) => {
     setSavingIds((prev) => new Set(prev).add(recommendation.rank));
@@ -54,10 +54,8 @@ export function BrandRecommendationList({
   return (
     <div className={cn("space-y-4", className)}>
       <div className="space-y-2">
-        <h3 className="font-semibold text-lg">
-          Same item — {recommendations.length} ranked swaps you can save
-        </h3>
-        <p className="text-muted text-sm">
+        <h3 className="sw-h2">Same item — {recommendations.length} ranked swaps you can save</h3>
+        <p className="sw-sub text-sm">
           Better options for your health priorities, ranked by our analysis
         </p>
       </div>
@@ -70,36 +68,47 @@ export function BrandRecommendationList({
           return (
             <div
               key={rec.rank}
-              className="flex items-start gap-4 p-4 bg-surface rounded-xl border border-border"
+              className="sw-card flex items-start gap-4 p-4"
             >
-              <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-sm text-white font-bold">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
                 {rec.rank}
               </div>
 
-              <div className="flex-1 space-y-2">
+              <div className="min-w-0 flex-1 space-y-2">
                 <div>
-                  <h4 className="font-medium">{rec.brand}</h4>
-                  <p className="text-sm text-muted">{rec.product_name}</p>
+                  <h4 className="font-bold">{rec.brand}</h4>
+                  <p className="text-sm text-ink-2">{rec.product_name}</p>
                 </div>
 
-                <p className="text-sm text-foreground">{rec.why_better}</p>
+                <p className="text-sm">{rec.why_better}</p>
+
+                {rec.ingredients_source && (
+                  <p className="text-xs text-muted">
+                    {rec.ingredients_source === "web"
+                      ? "Ingredients sourced from web lookup"
+                      : rec.ingredients_source === "open_food_facts"
+                        ? "Ingredients verified via Open Food Facts"
+                        : "Ingredients verified via USDA"}
+                  </p>
+                )}
 
                 {rec.tradeoffs && (
                   <p className="text-xs text-muted">
-                    <span className="font-medium">Tradeoffs:</span> {rec.tradeoffs}
+                    <span className="font-semibold">Tradeoffs:</span> {rec.tradeoffs}
                   </p>
                 )}
               </div>
 
               <button
+                type="button"
                 onClick={() => handleSave(rec)}
                 disabled={isSaving || isSaved}
                 className={cn(
-                  "flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                  "shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-colors",
                   isSaved
-                    ? "bg-green-100 text-green-700 border border-green-200"
-                    : "bg-primary text-primary-foreground hover:bg-primary/90",
-                  "disabled:opacity-50 disabled:cursor-not-allowed",
+                    ? "bg-verdict-good-soft text-verdict-good"
+                    : "bg-primary text-primary-foreground hover:brightness-105",
+                  "disabled:cursor-not-allowed disabled:opacity-50",
                 )}
               >
                 {isSaving ? "Saving..." : isSaved ? "✓ Saved" : "Save"}

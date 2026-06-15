@@ -18,6 +18,11 @@ export interface BrandRecommendation {
   product_name: string;
   why_better: string;
   tradeoffs?: string | null;
+  /** Added server-side after Pass 3 ingredient verification. */
+  ingredients_source?: "open_food_facts" | "usda" | "web";
+  ingredients_text?: string | null;
+  verification_confidence?: number;
+  source_url?: string | null;
 }
 
 /** Per-item shape returned by the OpenAI pass-2 analysis call. */

@@ -33,8 +33,9 @@ function collectText(parsed: unknown): string {
     for (const t of (item.priority_tradeoffs as Array<{ explanation?: string }>) ?? []) {
       if (t.explanation) chunks.push(t.explanation);
     }
-    for (const r of (item.brand_recommendations as Array<{ why_better?: string }>) ?? []) {
+    for (const r of (item.brand_recommendations as Array<{ why_better?: string; tradeoffs?: string | null }>) ?? []) {
       if (r.why_better) chunks.push(r.why_better);
+      if (r.tradeoffs) chunks.push(r.tradeoffs);
     }
   }
   return chunks.join("\n");

@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+#
+# Quality eval config — CI keyword/schema checks PLUS LLM-as-judge for brand swaps.
+# Run from repo root:  npm run eval:quality
+#
+# Uses the same production prompt, schema, and dataset as promptfooconfig.yaml.
+description: "Swapple scan analysis — quality gate (keywords + LLM judge for brand swaps)"
+
+prompts:
+  - file://prompts/scanAnalysisPrompt.ts:scanAnalysisPrompt
+
+providers:
+  - id: openai:gpt-4o
+    config:
+      temperature: 0
+      max_tokens: 2000
+      response_format: file://providers/scanResponseFormat.json
+
+tests: file://datasets/scanAnalysis.yaml
+
+defaultTest:
+  options:
+    provider:
+      id: openai:gpt-4o-mini
+      config:
+        temperature: 0
+    rubricPrompt: file://rubrics/brandRecommendationsJudgePrompt.txt
+  assert:
+    - type: is-json
+    - type: javascript
+      value: file://assertions/brandRecommendations.ts
+    - type: cost
+      threshold: 0.08
+    - type: latency
+      threshold: 45000
+    - type: llm-rubric
+      value: file://rubrics/brandRecommendationsCriteria.txt
+      threshold: 0.8
+
+outputPath: ./evals/output/quality-latest.json

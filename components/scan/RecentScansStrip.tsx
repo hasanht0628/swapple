@@ -34,14 +34,12 @@ export function RecentScansStrip({ limit = 3 }: RecentScansStripProps) {
   if (isLoading) {
     return (
       <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold">Recent scans</h2>
-        </div>
-        <div className="flex gap-3 overflow-x-auto pb-2 lg:grid lg:grid-cols-3 lg:gap-4 lg:overflow-visible lg:pb-0">
+        <h2 className="sw-h2">Recent scans</h2>
+        <div className="flex gap-3 overflow-x-auto pb-2">
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="flex-shrink-0 lg:flex-shrink w-20 h-20 lg:w-full lg:h-24 bg-surface rounded-xl animate-pulse"
+              className="h-20 w-20 shrink-0 animate-pulse rounded-[16px] bg-background-deep"
             />
           ))}
         </div>
@@ -52,10 +50,10 @@ export function RecentScansStrip({ limit = 3 }: RecentScansStripProps) {
   if (scans.length === 0) {
     return (
       <section className="space-y-4">
-        <h2 className="font-semibold">Recent scans</h2>
-        <div className="text-center py-8 text-muted text-sm">
+        <h2 className="sw-h2">Recent scans</h2>
+        <p className="py-6 text-center text-sm text-muted">
           No scans yet. Tap the scan button to get started!
-        </div>
+        </p>
       </section>
     );
   }
@@ -63,38 +61,26 @@ export function RecentScansStrip({ limit = 3 }: RecentScansStripProps) {
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold">Recent scans</h2>
-        <Link
-          href="/tracker"
-          className="text-sm text-primary hover:underline"
-        >
+        <h2 className="sw-h2">Recent scans</h2>
+        <Link href="/tracker" className="text-sm font-semibold text-primary hover:underline">
           See all
         </Link>
       </div>
 
-      <div className="flex gap-3 overflow-x-auto pb-2 lg:grid lg:grid-cols-3 lg:gap-4 lg:overflow-visible lg:pb-0">
+      <div className="flex gap-3 overflow-x-auto pb-2">
         {scans.map((scan) => (
-          <Link
-            key={scan.id}
-            href={`/scans/${scan.id}`}
-            className="flex-shrink-0 lg:flex-shrink block"
-          >
-            <div className="w-20 h-20 lg:w-full lg:h-24 bg-surface rounded-xl border border-border flex items-center justify-center text-muted text-xs lg:text-sm text-center p-2 hover:shadow-md transition-shadow">
+          <Link key={scan.id} href={`/scans/${scan.id}`} className="block shrink-0">
+            <div className="sw-ph h-20 w-20 overflow-hidden">
               {scan.image_url ? (
                 <Image
                   src={scan.image_url}
                   alt="Scan"
                   width={80}
                   height={80}
-                  className="w-full h-full object-cover rounded-lg"
+                  className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="space-y-1">
-                  <div className="text-lg lg:text-xl">📦</div>
-                  <div className="text-2xs lg:text-xs">
-                    {scan.item_count || 0} items
-                  </div>
-                </div>
+                <span>{scan.item_count || 0} items</span>
               )}
             </div>
           </Link>
